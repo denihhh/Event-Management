@@ -4,6 +4,7 @@ namespace App\Livewire\Admin;
 
 use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Title;
@@ -67,7 +68,7 @@ class Users extends Component
             ->paginate(15);
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.admin.users');
     }
