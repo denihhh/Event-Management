@@ -71,6 +71,8 @@
             </flux:sidebar.nav>
         </flux:sidebar>
 
+        @include('partials.impersonation-banner')
+
         {{ $slot }}
 
         @persist('toast')

@@ -2,9 +2,11 @@
 
 namespace App\Providers;
 
+use App\Models\User;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 
@@ -24,6 +26,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureDefaults();
+        $this->configureGate();
     }
 
     /**
@@ -46,5 +49,19 @@ class AppServiceProvider extends ServiceProvider
                 ->uncompromised()
             : null,
         );
+    }
+
+    /**
+     * Grant admins a blanket superpower over all Gate / Policy checks.
+     */
+    protected function configureGate(): void
+    {
+        Gate::before(function (User $user, string $ability): ?bool {
+            if ($user->isAdmin()) {
+                return true;
+            }
+
+            return null;
+        });
     }
 }
