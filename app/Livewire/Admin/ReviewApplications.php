@@ -2,10 +2,13 @@
 
 namespace App\Livewire\Admin;
 
+use App\Mail\OrganizerApplicationApprovedMail;
+use App\Mail\OrganizerApplicationRejectedMail;
 use App\Models\OrganizerApplication;
 use Flux\Flux;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -19,8 +22,6 @@ class ReviewApplications extends Component
     public string $filter = 'pending'; // pending, approved, rejected, all
 
     public ?int $reviewingApplicationId = null;
-
-    public int $approvalDurationDays = 30;
 
     public string $rejectionNotes = '';
 
@@ -46,7 +47,6 @@ class ReviewApplications extends Component
     {
         $app = OrganizerApplication::findOrFail($applicationId);
         $this->reviewingApplicationId = $app->id;
-        $this->approvalDurationDays = $app->requested_duration_days ?: 30;
         $this->rejectionNotes = $app->admin_notes ?? '';
     }
 
@@ -59,20 +59,30 @@ class ReviewApplications extends Component
         }
 
         $application = OrganizerApplication::with('user')->findOrFail($this->reviewingApplicationId);
-        $expiresAt = now()->addDays($this->approvalDurationDays);
+
+        if (! $application->isPending()) {
+            Flux::toast(variant: 'warning', text: __('This application has already been processed.'));
+            $this->reviewingApplicationId = null;
+
+            return;
+        }
 
         $application->update([
             'status' => 'approved',
-            'approved_until' => $expiresAt,
+            'approved_until' => null,
         ]);
 
         $application->user->update([
             'is_organizer' => true,
-            'organizer_expires_at' => $expiresAt,
+            'organizer_expires_at' => null,
         ]);
 
+        if ($application->user) {
+            Mail::to($application->user)->queue(new OrganizerApplicationApprovedMail($application));
+        }
+
         $this->reviewingApplicationId = null;
-        Flux::toast(variant: 'success', text: __('Application approved! User granted organizer role for :days days.', ['days' => $this->approvalDurationDays]));
+        Flux::toast(variant: 'success', text: __('Application approved! User granted permanent organizer role.'));
     }
 
     public function rejectApplication(): void
@@ -83,12 +93,23 @@ class ReviewApplications extends Component
             return;
         }
 
-        $application = OrganizerApplication::findOrFail($this->reviewingApplicationId);
+        $application = OrganizerApplication::with('user')->findOrFail($this->reviewingApplicationId);
+
+        if (! $application->isPending()) {
+            Flux::toast(variant: 'warning', text: __('This application has already been processed.'));
+            $this->reviewingApplicationId = null;
+
+            return;
+        }
 
         $application->update([
             'status' => 'rejected',
             'admin_notes' => $this->rejectionNotes,
         ]);
+
+        if ($application->user) {
+            Mail::to($application->user)->queue(new OrganizerApplicationRejectedMail($application));
+        }
 
         $this->reviewingApplicationId = null;
         Flux::toast(variant: 'info', text: __('Organizer application rejected.'));

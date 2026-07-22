@@ -79,11 +79,7 @@ class User extends Authenticatable
      */
     public function isOrganizer(): bool
     {
-        if (! $this->is_organizer) {
-            return false;
-        }
-
-        return $this->organizer_expires_at === null || $this->organizer_expires_at->isFuture();
+        return $this->is_organizer;
     }
 
     /**

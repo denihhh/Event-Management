@@ -28,8 +28,23 @@ class OrganizerApplicationFactory extends Factory
             'event_title' => fake()->sentence(4),
             'event_description' => fake()->paragraph(),
             'proposed_starts_at' => now()->addDays(30),
-            'requested_duration_days' => 30,
             'status' => 'pending',
         ];
+    }
+
+    public function approved(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'status' => 'approved',
+            'approved_until' => null,
+        ]);
+    }
+
+    public function rejected(?string $notes = null): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'status' => 'rejected',
+            'admin_notes' => $notes ?? 'Please provide a more detailed event plan and SSM business registration document.',
+        ]);
     }
 }

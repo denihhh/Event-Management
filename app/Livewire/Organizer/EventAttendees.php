@@ -9,15 +9,23 @@ use Illuminate\Support\Str;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Title;
 use Livewire\Component;
+use Livewire\WithPagination;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 #[Title('Attendee Roster')]
 class EventAttendees extends Component
 {
+    use WithPagination;
+
     #[Locked]
     public Event $event;
 
     public string $search = '';
+
+    public function updatedSearch(): void
+    {
+        $this->resetPage();
+    }
 
     public function mount(Event $event): void
     {
@@ -80,7 +88,7 @@ class EventAttendees extends Component
         }
 
         return view('livewire.organizer.event-attendees', [
-            'tickets' => $query->get(),
+            'tickets' => $query->paginate(15),
         ]);
     }
 }

@@ -49,6 +49,12 @@ class RegisterTicket extends Component
             $ticket = DB::transaction(function () {
                 $lockedEvent = Event::lockForUpdate()->findOrFail($this->event->id);
 
+                if ($lockedEvent->hasStarted()) {
+                    throw ValidationException::withMessages([
+                        'event' => __('This event has already started or taken place.'),
+                    ]);
+                }
+
                 if ($lockedEvent->isSoldOut()) {
                     throw ValidationException::withMessages([
                         'event' => __('This event is sold out.'),

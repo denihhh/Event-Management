@@ -88,6 +88,22 @@ test('user cannot register for sold out event', function () {
     Mail::assertNothingQueued();
 });
 
+test('user cannot register for an event that has already started', function () {
+    Mail::fake();
+
+    $user = User::factory()->create();
+    $pastEvent = Event::factory()->past()->create(['capacity' => 50, 'tickets_sold' => 0]);
+
+    Livewire::actingAs($user)
+        ->test(RegisterTicket::class, ['event' => $pastEvent])
+        ->call('register');
+
+    expect($pastEvent->fresh()->tickets_sold)->toBe(0);
+    expect(Ticket::where('event_id', $pastEvent->id)->count())->toBe(0);
+
+    Mail::assertNothingQueued();
+});
+
 test('user cannot register twice for the same event', function () {
     Mail::fake();
 

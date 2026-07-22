@@ -9,10 +9,13 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Title;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 #[Title('My Tickets')]
 class MyTickets extends Component
 {
+    use WithPagination;
+
     public ?int $cancellingTicketId = null;
 
     public function confirmCancel(int $ticketId): void
@@ -56,7 +59,7 @@ class MyTickets extends Component
             ->tickets()
             ->with(['event.organizer'])
             ->latest()
-            ->get();
+            ->paginate(10);
 
         return view('livewire.tickets.my-tickets', [
             'tickets' => $tickets,

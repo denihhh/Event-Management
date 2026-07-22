@@ -72,6 +72,10 @@
                 </flux:card>
             @endforeach
         </div>
+
+        <div class="pt-4">
+            {{ $tickets->links() }}
+        </div>
     @endif
 
     <!-- Cancel Confirmation Modal -->

@@ -50,7 +50,6 @@
                 <flux:table.columns>
                     <flux:table.column class="px-4 py-3.5 first:pl-6 last:pr-6">{{ __('Applicant / Organization') }}</flux:table.column>
                     <flux:table.column class="px-4 py-3.5 first:pl-6 last:pr-6">{{ __('Proposed Event Details') }}</flux:table.column>
-                    <flux:table.column class="w-28 whitespace-nowrap px-4 py-3.5 first:pl-6 last:pr-6">{{ __('Duration') }}</flux:table.column>
                     <flux:table.column class="w-28 whitespace-nowrap px-4 py-3.5 first:pl-6 last:pr-6">{{ __('Status') }}</flux:table.column>
                     <flux:table.column align="end" class="w-32 whitespace-nowrap px-4 py-3.5 first:pl-6 last:pr-6">{{ __('Actions') }}</flux:table.column>
                 </flux:table.columns>
@@ -77,10 +76,6 @@
                                     <p class="text-xs text-zinc-500 line-clamp-2">{{ $app->event_description }}</p>
                                     <p class="text-[11px] text-purple-600 dark:text-purple-400">Proposed: {{ $app->proposed_starts_at->format('M j, Y \a\t g:i A') }}</p>
                                 </div>
-                            </flux:table.cell>
-
-                            <flux:table.cell class="whitespace-nowrap px-4 py-3.5 first:pl-6 last:pr-6">
-                                <flux:badge color="purple" size="sm" rounded>{{ $app->requested_duration_days }} {{ __('Days') }}</flux:badge>
                             </flux:table.cell>
 
                             <flux:table.cell class="whitespace-nowrap px-4 py-3.5 first:pl-6 last:pr-6">
@@ -121,7 +116,7 @@
         <div class="space-y-6">
             <div>
                 <flux:heading size="lg">{{ __('Review Partner Application') }}</flux:heading>
-                <flux:subheading>{{ __('Verify business credentials and set role access duration.') }}</flux:subheading>
+                <flux:subheading>{{ __('Verify business credentials and approve organizer status.') }}</flux:subheading>
             </div>
 
             @if ($this->activeApplication)
@@ -158,35 +153,50 @@
                 </div>
             @endif
 
-            <div class="space-y-4">
-                <flux:input
-                    wire:model="approvalDurationDays"
-                    type="number"
-                    :label="__('Grant Organizer Status Duration (Days)')"
-                    min="1"
-                    max="365"
-                    required
-                />
+            @if ($this->activeApplication && $this->activeApplication->isPending())
+                <div class="space-y-4">
+                    <flux:textarea
+                        wire:model="rejectionNotes"
+                        :label="__('Rejection Notes / Feedback (Optional)')"
+                        :placeholder="__('Provide notes if rejecting request...')"
+                        rows="3"
+                    />
+                </div>
 
-                <flux:textarea
-                    wire:model="rejectionNotes"
-                    :label="__('Rejection Notes / Feedback (Optional)')"
-                    :placeholder="__('Provide notes if rejecting request...')"
-                    rows="3"
-                />
-            </div>
+                <div class="flex justify-end gap-3 pt-2 border-t border-zinc-100 dark:border-zinc-800">
+                    <flux:button variant="subtle" wire:click="$set('reviewingApplicationId', null)">
+                        {{ __('Cancel') }}
+                    </flux:button>
+                    <flux:button variant="danger" wire:click="rejectApplication" wire:loading.attr="disabled">
+                        {{ __('Reject Request') }}
+                    </flux:button>
+                    <flux:button variant="primary" wire:click="approveApplication" wire:loading.attr="disabled">
+                        {{ __('Approve & Grant Role') }}
+                    </flux:button>
+                </div>
+            @else
+                <div class="p-4 bg-zinc-100 dark:bg-zinc-800 rounded-lg text-sm flex items-center justify-between">
+                    <span class="text-zinc-600 dark:text-zinc-400 font-medium">{{ __('Application Status:') }}</span>
+                    @if ($this->activeApplication?->isApproved())
+                        <flux:badge color="emerald" rounded size="sm">{{ __('Approved') }}</flux:badge>
+                    @else
+                        <flux:badge color="red" rounded size="sm">{{ __('Rejected') }}</flux:badge>
+                    @endif
+                </div>
 
-            <div class="flex justify-end gap-3 pt-2 border-t border-zinc-100 dark:border-zinc-800">
-                <flux:button variant="subtle" wire:click="$set('reviewingApplicationId', null)">
-                    {{ __('Cancel') }}
-                </flux:button>
-                <flux:button variant="danger" wire:click="rejectApplication" wire:loading.attr="disabled">
-                    {{ __('Reject Request') }}
-                </flux:button>
-                <flux:button variant="primary" wire:click="approveApplication" wire:loading.attr="disabled">
-                    {{ __('Approve & Grant Role') }}
-                </flux:button>
-            </div>
+                @if ($this->activeApplication?->admin_notes)
+                    <div class="p-3 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800/50 rounded-lg text-xs space-y-1">
+                        <span class="font-semibold text-red-800 dark:text-red-300">{{ __('Admin Notes:') }}</span>
+                        <p class="text-red-700 dark:text-red-400 italic">"{{ $this->activeApplication->admin_notes }}"</p>
+                    </div>
+                @endif
+
+                <div class="flex justify-end pt-2 border-t border-zinc-100 dark:border-zinc-800">
+                    <flux:button variant="subtle" wire:click="$set('reviewingApplicationId', null)">
+                        {{ __('Close') }}
+                    </flux:button>
+                </div>
+            @endif
         </div>
     </flux:modal>
 </div>

@@ -29,7 +29,7 @@ class EventPolicy
      */
     public function create(User $user): bool
     {
-        return $user->is_organizer;
+        return $user->isOrganizer();
     }
 
     /**
@@ -37,7 +37,7 @@ class EventPolicy
      */
     public function update(User $user, Event $event): bool
     {
-        return $user->is_organizer && $user->id === $event->user_id;
+        return $user->isOrganizer() && $user->id === $event->user_id;
     }
 
     /**
@@ -45,7 +45,7 @@ class EventPolicy
      */
     public function delete(User $user, Event $event): bool
     {
-        return $user->is_organizer && $user->id === $event->user_id;
+        return $user->isOrganizer() && $user->id === $event->user_id;
     }
 
     /**
@@ -62,7 +62,7 @@ class EventPolicy
      */
     public function restore(User $user, Event $event): bool
     {
-        return $user->is_organizer && $user->id === $event->user_id;
+        return $user->isOrganizer() && $user->id === $event->user_id;
     }
 
     /**

@@ -5,7 +5,7 @@
                 {{ __('Back to Events') }}
             </flux:button>
             <flux:heading size="xl" level="1">{{ __('Attendee Roster') }}</flux:heading>
-            <flux:subheading>{{ __('Registered attendees for :title (:count total)', ['title' => $event->title, 'count' => $tickets->count()]) }}</flux:subheading>
+            <flux:subheading>{{ __('Registered attendees for :title (:count total)', ['title' => $event->title, 'count' => $tickets->total()]) }}</flux:subheading>
         </div>
         <div class="flex items-center gap-3">
             <flux:button variant="primary" icon="arrow-down-tray" wire:click="exportCsv">
@@ -71,6 +71,10 @@
                     @endforeach
                 </flux:table.rows>
             </flux:table>
+        </div>
+
+        <div class="pt-4">
+            {{ $tickets->links() }}
         </div>
     @endif
 </div>

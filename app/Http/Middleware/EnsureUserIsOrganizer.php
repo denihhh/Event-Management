@@ -15,7 +15,7 @@ class EnsureUserIsOrganizer
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (! $request->user()?->is_organizer && ! $request->user()?->isAdmin()) {
+        if (! $request->user()?->isOrganizer() && ! $request->user()?->isAdmin()) {
             abort(403, 'Organizer access required.');
         }
 

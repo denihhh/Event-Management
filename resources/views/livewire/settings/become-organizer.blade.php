@@ -12,11 +12,6 @@
             </div>
             <p class="text-sm text-emerald-700 dark:text-emerald-400">
                 {{ __('Your account currently has organizer privileges.') }}
-                @if (auth()->user()->organizer_expires_at)
-                    {{ __('Privileges active until') }} <strong>{{ auth()->user()->organizer_expires_at->format('F j, Y \a\t g:i A') }}</strong>.
-                @else
-                    {{ __('Privileges are permanent.') }}
-                @endif
             </p>
             <flux:button size="sm" variant="primary" :href="route('organizer.events.index')" wire:navigate>
                 {{ __('Go to Organizer Dashboard') }}
@@ -121,20 +116,11 @@
                     required
                 />
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
                     <flux:input
                         wire:model="proposed_starts_at"
                         type="datetime-local"
                         :label="__('Proposed Event Date')"
-                        required
-                    />
-
-                    <flux:input
-                        wire:model="requested_duration_days"
-                        type="number"
-                        :label="__('Requested Organizer Duration (Days)')"
-                        min="1"
-                        max="365"
                         required
                     />
                 </div>

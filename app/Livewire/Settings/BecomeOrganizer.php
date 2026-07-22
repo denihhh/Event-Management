@@ -29,8 +29,6 @@ class BecomeOrganizer extends Component
 
     public string $proposed_starts_at = '';
 
-    public int $requested_duration_days = 30;
-
     public function rules(): array
     {
         return [
@@ -42,7 +40,6 @@ class BecomeOrganizer extends Component
             'event_title' => ['required', 'string', 'max:255'],
             'event_description' => ['required', 'string'],
             'proposed_starts_at' => ['required', 'date', 'after:now'],
-            'requested_duration_days' => ['required', 'integer', 'min:1', 'max:365'],
         ];
     }
 
@@ -52,6 +49,12 @@ class BecomeOrganizer extends Component
 
         if ($user->isOrganizer()) {
             Flux::toast(variant: 'warning', text: __('You are already an active event organizer.'));
+
+            return;
+        }
+
+        if ($user->organizerApplications()->where('status', 'pending')->exists()) {
+            Flux::toast(variant: 'warning', text: __('You already have a pending application under review.'));
 
             return;
         }
@@ -73,7 +76,6 @@ class BecomeOrganizer extends Component
             'event_description',
             'proposed_starts_at',
         ]);
-        $this->requested_duration_days = 30;
 
         Flux::toast(variant: 'success', text: __('Organizer application submitted! An admin will review your request.'));
     }

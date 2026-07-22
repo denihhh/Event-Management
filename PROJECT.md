@@ -23,13 +23,13 @@ A web application designed for event organizers to publish public events with fi
 ### Users (`users`)
 - **Roles:**
   - **Admin** (`is_admin = true`): System superuser. Bypasses all Gate/Policy checks via `Gate::before()`, reviews organizer applications, impersonates users, and manages system settings. Cannot be impersonated.
-  - **Organizer** (`is_organizer = true` & active `organizer_expires_at`): Can publish, edit, and cancel events, view attendee rosters, and export CSV reports.
+  - **Organizer** (`is_organizer = true`): Can publish, edit, and cancel events, view attendee rosters, and export CSV reports.
   - **Attendee**: Browses public events, claims digital tickets, views ticket passes, and applies for organizer privileges.
 - **Attributes:** `id`, `name`, `email`, `password`, `is_organizer`, `organizer_expires_at` (datetime, nullable), `is_admin`, `timestamps`.
 
 ### Organizer Applications (`organizer_applications`)
 - **Belongs to:** User (`user()`)
-- **Attributes:** `id`, `user_id`, `event_title`, `event_description`, `proposed_starts_at`, `requested_duration_days`, `status` (`pending`, `approved`, `rejected`), `admin_notes`, `approved_until`, `timestamps`.
+- **Attributes:** `id`, `user_id`, `organization_name`, `business_reg_number`, `contact_phone`, `bank_name`, `bank_account_number`, `event_title`, `event_description`, `proposed_starts_at`, `status` (`pending`, `approved`, `rejected`), `admin_notes`, `timestamps`.
 
 ### Events (`events`)
 - **Belongs to:** User (Organizer/Admin) (`organizer()`)
@@ -38,7 +38,7 @@ A web application designed for event organizers to publish public events with fi
 - **Attributes:** `id`, `user_id`, `title`, `description`, `starts_at`, `location`, `capacity`, `tickets_sold`, `created_at`, `updated_at`, `deleted_at`.
 
 ### Tickets (`tickets`)
-- **Belongs to:** Event (`event()` with `withTrashed()`), User (`user()`)
+- **Belongs to:** User (`user()`), Event (`event()`)
 - **Attributes:** `id`, `event_id`, `user_id`, `ticket_code` (UUID string), `reminder_sent` (boolean), `timestamps`.
 
 ---
@@ -58,8 +58,9 @@ A web application designed for event organizers to publish public events with fi
 
 ### C. Organizer Request & Approval Workflow
 - Attendees apply to become an organizer via `/event-operation/become-organizer` (`route('become-organizer.edit')`) or via Module 2 "Apply Organizer".
-- Admins review pending applications via `/admin/applications` (`App\Livewire\Admin\ReviewApplications`), setting approved duration in days (`organizer_expires_at`).
-- `User::isOrganizer()` dynamically verifies `$user->is_organizer` and confirms `$user->organizer_expires_at` is null or in the future.
+- Applicants fill in business entity credentials (Company Name, Registration No., Phone, Bank Payout info) and proposed event details.
+- Admins review pending applications via `/admin/applications` (`App\Livewire\Admin\ReviewApplications`) and grant permanent organizer access upon approval.
+- `User::isOrganizer()` returns `$user->is_organizer` as the single source of truth used across middleware (`EnsureUserIsOrganizer`) and policies (`EventPolicy`).
 
 ### D. User Impersonation & User Management
 - Housed under `App\Livewire\Admin\Users` at `/admin/users` (`route('admin.users.index')`).
