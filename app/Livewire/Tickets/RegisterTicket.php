@@ -4,6 +4,7 @@ namespace App\Livewire\Tickets;
 
 use App\Mail\EventTicketMail;
 use App\Models\Event;
+use App\Models\Ticket;
 use Flux\Flux;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
@@ -46,7 +47,8 @@ class RegisterTicket extends Component
         }
 
         try {
-            $ticket = DB::transaction(function () {
+            /** @var Ticket $ticket */
+            $ticket = DB::transaction(function (): Ticket {
                 $lockedEvent = Event::lockForUpdate()->findOrFail($this->event->id);
 
                 if ($lockedEvent->hasStarted()) {
@@ -73,6 +75,7 @@ class RegisterTicket extends Component
                     ]);
                 }
 
+                /** @var Ticket $ticket */
                 $ticket = $lockedEvent->tickets()->create([
                     'user_id' => Auth::id(),
                 ]);

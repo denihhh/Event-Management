@@ -61,6 +61,8 @@ class Ticket extends Model
 
     /**
      * Get the event this ticket belongs to.
+     *
+     * @return BelongsTo<Event, $this>
      */
     public function event(): BelongsTo
     {
@@ -69,6 +71,8 @@ class Ticket extends Model
 
     /**
      * Get the attendee who owns this ticket.
+     *
+     * @return BelongsTo<User, $this>
      */
     public function user(): BelongsTo
     {

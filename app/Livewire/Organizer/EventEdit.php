@@ -40,6 +40,11 @@ class EventEdit extends Component
         $this->capacity = $event->capacity;
     }
 
+    /**
+     * Get the validation rules for updating an event.
+     *
+     * @return array<string, mixed>
+     */
     public function rules(): array
     {
         $minCapacity = max(1, $this->event->tickets_sold);

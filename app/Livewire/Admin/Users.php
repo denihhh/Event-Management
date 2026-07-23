@@ -51,7 +51,7 @@ class Users extends Component
     /**
      * All users matching current search excluding authenticated admin.
      *
-     * @return LengthAwarePaginator<User>
+     * @return LengthAwarePaginator<int, User>
      */
     #[Computed]
     public function users(): LengthAwarePaginator

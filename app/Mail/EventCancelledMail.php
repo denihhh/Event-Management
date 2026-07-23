@@ -15,6 +15,9 @@ class EventCancelledMail extends Mailable implements ShouldQueue
 
     public int $tries = 3;
 
+    /**
+     * @return array<int, int>
+     */
     public function backoff(): array
     {
         return [10, 60, 300];

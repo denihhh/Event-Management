@@ -63,6 +63,8 @@ class OrganizerApplication extends Model
 
     /**
      * Get the applicant user who submitted this application.
+     *
+     * @return BelongsTo<User, $this>
      */
     public function user(): BelongsTo
     {

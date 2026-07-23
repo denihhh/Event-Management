@@ -29,6 +29,11 @@ class BecomeOrganizer extends Component
 
     public string $proposed_starts_at = '';
 
+    /**
+     * Get the validation rules for the application form.
+     *
+     * @return array<string, mixed>
+     */
     public function rules(): array
     {
         return [

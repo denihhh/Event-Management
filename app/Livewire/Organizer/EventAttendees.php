@@ -53,13 +53,17 @@ class EventAttendees extends Component
 
         return response()->stream(function () use ($tickets): void {
             $handle = fopen('php://output', 'w');
+            if ($handle === false) {
+                return;
+            }
+
             fputcsv($handle, ['Ticket Code', 'Attendee Name', 'Attendee Email', 'Registration Date', 'Reminder Sent']);
 
             foreach ($tickets as $ticket) {
                 fputcsv($handle, [
                     $ticket->ticket_code,
-                    $ticket->user?->name ?? 'N/A',
-                    $ticket->user?->email ?? 'N/A',
+                    $ticket->user ? $ticket->user->name : 'N/A',
+                    $ticket->user ? $ticket->user->email : 'N/A',
                     $ticket->created_at->format('Y-m-d H:i:s'),
                     $ticket->reminder_sent ? 'Yes' : 'No',
                 ]);

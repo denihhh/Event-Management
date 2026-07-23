@@ -28,6 +28,11 @@ class EventCreate extends Component
         Gate::authorize('create', Event::class);
     }
 
+    /**
+     * Get the validation rules for creating an event.
+     *
+     * @return array<string, mixed>
+     */
     public function rules(): array
     {
         return [

@@ -46,6 +46,8 @@ class Event extends Model
 
     /**
      * Get the organizer who created this event.
+     *
+     * @return BelongsTo<User, $this>
      */
     public function organizer(): BelongsTo
     {
@@ -54,6 +56,8 @@ class Event extends Model
 
     /**
      * Get all tickets for this event.
+     *
+     * @return HasMany<Ticket, $this>
      */
     public function tickets(): HasMany
     {

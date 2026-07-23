@@ -120,6 +120,8 @@ class User extends Authenticatable
 
     /**
      * Get the events organized by this user.
+     *
+     * @return HasMany<Event, $this>
      */
     public function organizedEvents(): HasMany
     {
@@ -128,6 +130,8 @@ class User extends Authenticatable
 
     /**
      * Get the tickets owned by this user.
+     *
+     * @return HasMany<Ticket, $this>
      */
     public function tickets(): HasMany
     {
@@ -136,6 +140,8 @@ class User extends Authenticatable
 
     /**
      * Get all organizer applications submitted by this user.
+     *
+     * @return HasMany<OrganizerApplication, $this>
      */
     public function organizerApplications(): HasMany
     {
@@ -144,6 +150,8 @@ class User extends Authenticatable
 
     /**
      * Get the user's latest organizer application.
+     *
+     * @return HasOne<OrganizerApplication, $this>
      */
     public function latestOrganizerApplication(): HasOne
     {

@@ -3,6 +3,7 @@
 namespace App\Livewire\Organizer;
 
 use App\Models\Ticket;
+use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Title;
@@ -24,6 +25,7 @@ class GlobalAttendees extends Component
 
     public function exportCsv(): StreamedResponse
     {
+        /** @var User $user */
         $user = Auth::user();
         $fileName = 'all-attendees-'.now()->format('Y-m-d').'.csv';
 
@@ -46,14 +48,18 @@ class GlobalAttendees extends Component
 
         return response()->stream(function () use ($tickets): void {
             $handle = fopen('php://output', 'w');
+            if ($handle === false) {
+                return;
+            }
+
             fputcsv($handle, ['Ticket Code', 'Attendee Name', 'Attendee Email', 'Event Title', 'Registration Date', 'Reminder Sent']);
 
             foreach ($tickets as $ticket) {
                 fputcsv($handle, [
                     $ticket->ticket_code,
-                    $ticket->user?->name ?? 'N/A',
-                    $ticket->user?->email ?? 'N/A',
-                    $ticket->event?->title ?? 'N/A',
+                    $ticket->user ? $ticket->user->name : 'N/A',
+                    $ticket->user ? $ticket->user->email : 'N/A',
+                    $ticket->event ? $ticket->event->title : 'N/A',
                     $ticket->created_at->format('Y-m-d H:i:s'),
                     $ticket->reminder_sent ? 'Yes' : 'No',
                 ]);
@@ -65,6 +71,7 @@ class GlobalAttendees extends Component
 
     public function render(): View
     {
+        /** @var User $user */
         $user = Auth::user();
 
         $query = Ticket::query()
