@@ -3,11 +3,14 @@
     <head>
         @include('partials.head')
     </head>
-    <body class="min-h-screen bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 flex flex-col antialiased">
+    <body class="min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 flex flex-col antialiased">
         <flux:header container class="border-b border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
             <x-app-logo href="{{ route('home') }}" wire:navigate />
 
-            <flux:navbar class="ml-6 -mb-px max-lg:hidden">
+            <flux:navbar class="ml-6 -mb-px hidden md:flex">
+                <flux:navbar.item icon="home" :href="route('home')" :current="request()->routeIs('home')" wire:navigate>
+                    {{ __('Home') }}
+                </flux:navbar.item>
                 <flux:navbar.item icon="calendar" :href="route('events.index')" :current="request()->routeIs('events.*')" wire:navigate>
                     {{ __('Explore Events') }}
                 </flux:navbar.item>
@@ -25,14 +28,14 @@
                             {{ __('Organizer Dashboard') }}
                         </flux:navbar.item>
                     @endif
-                    <flux:navbar.item icon="home" :href="route('dashboard')" wire:navigate>
+                    <flux:navbar.item icon="layout-grid" :href="route('dashboard')" wire:navigate>
                         {{ __('Dashboard') }}
                     </flux:navbar.item>
                 @else
                     <flux:navbar.item :href="route('login')" wire:navigate>
                         {{ __('Log in') }}
                     </flux:navbar.item>
-                    <flux:button variant="primary" size="sm" :href="route('register')" wire:navigate>
+                    <flux:button variant="primary" size="sm" :href="route('register')" wire:navigate class="bg-purple-600 hover:bg-purple-500 text-white font-medium">
                         {{ __('Register') }}
                     </flux:button>
                 @endauth
@@ -41,12 +44,12 @@
 
         @include('partials.impersonation-banner')
 
-        <flux:main container class="flex-1 py-8">
+        <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             {{ $slot }}
-        </flux:main>
+        </main>
 
-        <footer class="border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 py-6 text-center text-sm text-zinc-500">
-            <div class="max-w-7xl mx-auto px-4">
+        <footer class="w-full border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 py-6">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm text-zinc-500">
                 <p>&copy; {{ date('Y') }} Eventive. {{ __('All rights reserved.') }}</p>
             </div>
         </footer>

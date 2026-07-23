@@ -14,9 +14,10 @@ use App\Livewire\Organizer\GlobalAttendees;
 use App\Livewire\Organizer\OrganizerEventIndex;
 use App\Livewire\Settings\BecomeOrganizer;
 use App\Livewire\Tickets\MyTickets;
+use App\Livewire\Welcome;
 use Illuminate\Support\Facades\Route;
 
-Route::redirect('/', '/events')->name('home');
+Route::get('/', Welcome::class)->name('home');
 Route::get('/events', EventIndex::class)->name('events.index');
 Route::get('/events/{event}', EventShow::class)->name('events.show');
 

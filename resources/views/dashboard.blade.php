@@ -107,5 +107,12 @@
                 </flux:card>
             @endif
         </div>
+
+        {{-- Organizer Analytics & Performance Dashboard --}}
+        @if (auth()->user()?->isOrganizer() || auth()->user()?->isAdmin())
+            <div class="pt-4">
+                <livewire:organizer.organizer-analytics />
+            </div>
+        @endif
     </div>
 </x-layouts::app>
