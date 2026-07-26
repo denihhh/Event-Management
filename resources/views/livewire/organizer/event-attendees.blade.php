@@ -8,6 +8,9 @@
             <flux:subheading>{{ __('Registered attendees for :title (:count total)', ['title' => $event->title, 'count' => $tickets->total()]) }}</flux:subheading>
         </div>
         <div class="flex items-center gap-3">
+            <flux:button variant="filled" icon="qr-code" :href="route('organizer.events.check-in', $event)" wire:navigate>
+                {{ __('Door Check-In') }}
+            </flux:button>
             <flux:button variant="primary" icon="arrow-down-tray" wire:click="exportCsv">
                 {{ __('Export CSV') }}
             </flux:button>
@@ -42,8 +45,8 @@
                 </flux:table.columns>
 
                 <flux:table.rows>
-                    @foreach ($tickets as $ticket)
-                        <flux:table.row key="{{ $ticket->id }}">
+                    @forelse ($tickets as $ticket)
+                        <flux:table.row wire:key="ticket-{{ $ticket->id }}">
                             <flux:table.cell class="font-medium text-sm px-4 py-3.5 first:pl-6 last:pr-6">
                                 {{ $ticket->user?->name ?? 'N/A' }}
                             </flux:table.cell>

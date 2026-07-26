@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use chillerlan\QRCode\QRCode;
 use Database\Factories\TicketFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -17,10 +18,11 @@ use Illuminate\Support\Str;
  * @property int $user_id
  * @property string $ticket_code
  * @property bool $reminder_sent
+ * @property Carbon|null $checked_in_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['event_id', 'user_id', 'reminder_sent'])]
+#[Fillable(['event_id', 'user_id', 'reminder_sent', 'checked_in_at'])]
 class Ticket extends Model
 {
     /** @use HasFactory<TicketFactory> */
@@ -35,6 +37,7 @@ class Ticket extends Model
     {
         return [
             'reminder_sent' => 'boolean',
+            'checked_in_at' => 'datetime',
         ];
     }
 
@@ -66,6 +69,7 @@ class Ticket extends Model
      */
     public function event(): BelongsTo
     {
+        /** @var BelongsTo<Event, $this> */
         return $this->belongsTo(Event::class)->withTrashed();
     }
 
@@ -77,5 +81,41 @@ class Ticket extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Determine if the ticket has been checked in.
+     */
+    public function isCheckedIn(): bool
+    {
+        return $this->checked_in_at !== null;
+    }
+
+    /**
+     * Mark the ticket as checked in.
+     */
+    public function checkIn(): void
+    {
+        $this->update([
+            'checked_in_at' => now(),
+        ]);
+    }
+
+    /**
+     * Undo check in for this ticket.
+     */
+    public function undoCheckIn(): void
+    {
+        $this->update([
+            'checked_in_at' => null,
+        ]);
+    }
+
+    /**
+     * Generate an SVG QR code Data URI for this ticket code.
+     */
+    public function getQrCodeDataUri(): string
+    {
+        return (new QRCode)->render($this->ticket_code);
     }
 }

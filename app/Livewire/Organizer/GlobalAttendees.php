@@ -2,11 +2,15 @@
 
 namespace App\Livewire\Organizer;
 
+use App\Models\Event;
 use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Title;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -16,11 +20,36 @@ class GlobalAttendees extends Component
 {
     use WithPagination;
 
+    #[Url(history: true)]
     public string $search = '';
+
+    #[Url(history: true)]
+    public string $eventId = 'all';
 
     public function updatedSearch(): void
     {
         $this->resetPage();
+    }
+
+    public function updatedEventId(): void
+    {
+        $this->resetPage();
+    }
+
+    /**
+     * Get events available for filtering.
+     *
+     * @return Collection<int, Event>
+     */
+    #[Computed]
+    public function events(): Collection
+    {
+        /** @var User $user */
+        $user = Auth::user();
+
+        return $user->isAdmin()
+            ? Event::orderBy('title')->get()
+            : $user->organizedEvents()->orderBy('title')->get();
     }
 
     public function exportCsv(): StreamedResponse
@@ -39,6 +68,10 @@ class GlobalAttendees extends Component
             });
         }
 
+        if ($this->eventId !== 'all') {
+            $query->where('event_id', $this->eventId);
+        }
+
         $tickets = $query->get();
 
         $headers = [
@@ -52,7 +85,7 @@ class GlobalAttendees extends Component
                 return;
             }
 
-            fputcsv($handle, ['Ticket Code', 'Attendee Name', 'Attendee Email', 'Event Title', 'Registration Date', 'Reminder Sent']);
+            fputcsv($handle, ['Ticket Code', 'Attendee Name', 'Attendee Email', 'Event Title', 'Registration Date', 'Reminder Sent', 'Checked In', 'Checked In At']);
 
             foreach ($tickets as $ticket) {
                 fputcsv($handle, [
@@ -62,6 +95,8 @@ class GlobalAttendees extends Component
                     $ticket->event ? $ticket->event->title : 'N/A',
                     $ticket->created_at->format('Y-m-d H:i:s'),
                     $ticket->reminder_sent ? 'Yes' : 'No',
+                    $ticket->isCheckedIn() ? 'Yes' : 'No',
+                    $ticket->checked_in_at ? $ticket->checked_in_at->format('Y-m-d H:i:s') : 'N/A',
                 ]);
             }
 
@@ -82,6 +117,10 @@ class GlobalAttendees extends Component
             $query->whereHas('event', function ($q) use ($user): void {
                 $q->where('user_id', $user->id);
             });
+        }
+
+        if ($this->eventId !== 'all') {
+            $query->where('event_id', $this->eventId);
         }
 
         if (filled($this->search)) {

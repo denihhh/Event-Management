@@ -3,6 +3,7 @@
 use App\Livewire\Organizer\EventAttendees;
 use App\Livewire\Organizer\EventCreate;
 use App\Livewire\Organizer\EventEdit;
+use App\Livewire\Organizer\GlobalAttendees;
 use App\Livewire\Organizer\OrganizerEventIndex;
 use App\Mail\EventCancelledMail;
 use App\Mail\EventUpdatedMail;
@@ -136,4 +137,19 @@ test('organizer can view attendee roster and export CSV', function () {
         ->test(EventAttendees::class, ['event' => $event])
         ->call('exportCsv')
         ->assertFileDownloaded();
+});
+
+test('organizer can filter global attendee roster by event', function (): void {
+    $organizer = User::factory()->organizer()->create();
+    $event1 = Event::factory()->create(['user_id' => $organizer->id, 'title' => 'Alpha Summit']);
+    $event2 = Event::factory()->create(['user_id' => $organizer->id, 'title' => 'Beta Festival']);
+
+    $ticket1 = Ticket::factory()->create(['event_id' => $event1->id]);
+    $ticket2 = Ticket::factory()->create(['event_id' => $event2->id]);
+
+    Livewire::actingAs($organizer)
+        ->test(GlobalAttendees::class)
+        ->set('eventId', (string) $event1->id)
+        ->assertSee($ticket1->ticket_code)
+        ->assertDontSee($ticket2->ticket_code);
 });

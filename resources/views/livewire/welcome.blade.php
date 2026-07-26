@@ -7,7 +7,7 @@
 
         <div class="relative z-10 max-w-3xl space-y-6">
             <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-xs font-semibold text-purple-200">
-                <flux:icon name="sparkles" class="size-3.5 text-amber-400" />
+                <flux:icon name="magnifying-glass" class="size-3.5 text-amber-400" />
                 <span>{{ __('Discover & Host Extraordinary Events') }}</span>
             </div>
 
@@ -29,7 +29,7 @@
                         class="bg-white/10 dark:bg-zinc-900/60 border-white/20 dark:border-zinc-700 text-white placeholder-purple-200/60 shadow-lg rounded-xl"
                     />
                 </div>
-                <flux:button type="submit" variant="primary" icon="sparkles" class="shrink-0 bg-purple-600 hover:bg-purple-500 text-white font-semibold">
+                <flux:button type="submit" variant="primary" class="shrink-0 bg-purple-600 hover:bg-purple-500 text-white font-semibold">
                     {{ __('Find Events') }}
                 </flux:button>
             </form>
@@ -107,19 +107,19 @@
         @else
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 @foreach ($featuredEvents as $event)
-                    <flux:card key="{{ $event->id }}" class="flex flex-col justify-between hover:shadow-lg transition-shadow bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800">
-                        <div class="space-y-4">
-                            <div class="flex items-start justify-between gap-2">
-                                <flux:badge size="sm" color="purple" icon="user">
-                                    {{ $event->organizer->name }}
+                    <flux:card wire:key="event-{{ $event->id }}" class="flex flex-col justify-between hover:shadow-lg transition-shadow bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 min-w-0 overflow-hidden">
+                        <div class="space-y-4 min-w-0">
+                            <div class="flex flex-wrap items-center justify-between gap-2 min-w-0">
+                                <flux:badge size="sm" color="purple" icon="user" class="max-w-[70%] shrink-0">
+                                    <span class="truncate inline-block max-w-[130px] sm:max-w-[170px]">{{ $event->organizer->name }}</span>
                                 </flux:badge>
 
                                 @if ($event->isSoldOut())
-                                    <flux:badge size="sm" color="red">{{ __('Sold Out') }}</flux:badge>
+                                    <flux:badge size="sm" color="red" class="shrink-0">{{ __('Sold Out') }}</flux:badge>
                                 @elseif ($event->remainingTickets() <= 5)
-                                    <flux:badge size="sm" color="amber">{{ $event->remainingTickets() }} {{ __('left') }}</flux:badge>
+                                    <flux:badge size="sm" color="amber" class="shrink-0">{{ $event->remainingTickets() }} {{ __('left') }}</flux:badge>
                                 @else
-                                    <flux:badge size="sm" color="emerald">{{ $event->remainingTickets() }} {{ __('available') }}</flux:badge>
+                                    <flux:badge size="sm" color="emerald" class="shrink-0">{{ $event->remainingTickets() }} {{ __('available') }}</flux:badge>
                                 @endif
                             </div>
 

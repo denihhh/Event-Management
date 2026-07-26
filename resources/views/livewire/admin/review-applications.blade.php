@@ -56,7 +56,7 @@
 
                 <flux:table.rows>
                     @foreach ($applications as $app)
-                        <flux:table.row key="{{ $app->id }}">
+                        <flux:table.row wire:key="app-{{ $app->id }}">
                             <flux:table.cell class="px-4 py-3.5 first:pl-6 last:pr-6">
                                 <div class="min-w-0 py-0.5 space-y-1">
                                     <p class="font-semibold text-sm text-zinc-900 dark:text-zinc-100">

@@ -18,14 +18,18 @@
     @else
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             @foreach ($tickets as $ticket)
-                <flux:card key="{{ $ticket->id }}" class="space-y-4 flex flex-col justify-between">
+                <flux:card wire:key="ticket-{{ $ticket->id }}" class="space-y-4 flex flex-col justify-between">
                     <div class="space-y-3">
                         <div class="flex items-start justify-between gap-2">
                             <flux:badge color="purple" size="sm" icon="user">
                                 {{ $ticket->event->organizer->name }}
                             </flux:badge>
 
-                            @if ($ticket->event->hasStarted())
+                            @if ($ticket->isCheckedIn())
+                                <flux:badge color="teal" size="sm" icon="check-circle">
+                                    Checked In ({{ $ticket->checked_in_at?->format('g:i A') }})
+                                </flux:badge>
+                            @elseif ($ticket->event->hasStarted())
                                 <flux:badge color="zinc" size="sm">Past Event</flux:badge>
                             @else
                                 <flux:badge color="emerald" size="sm">Active Ticket</flux:badge>
@@ -49,11 +53,16 @@
                             </div>
                         </div>
 
-                        <!-- Ticket Code Box -->
-                        <div class="p-3 bg-zinc-50 dark:bg-zinc-800 rounded-lg border border-zinc-200 dark:border-zinc-700 space-y-1">
-                            <span class="text-xs uppercase tracking-wider text-zinc-400 font-semibold">Digital Ticket Pass Code</span>
-                            <div class="font-mono text-sm font-bold text-purple-600 dark:text-purple-400 select-all">
-                                {{ $ticket->ticket_code }}
+                        <!-- Ticket Pass & QR Code Box -->
+                        <div class="p-3 bg-zinc-50 dark:bg-zinc-800 rounded-lg border border-zinc-200 dark:border-zinc-700 flex items-center justify-between gap-4">
+                            <div class="space-y-1">
+                                <span class="text-xs uppercase tracking-wider text-zinc-400 font-semibold">Digital Ticket Pass Code</span>
+                                <div class="font-mono text-xs font-bold text-purple-600 dark:text-purple-400 select-all break-all">
+                                    {{ $ticket->ticket_code }}
+                                </div>
+                            </div>
+                            <div class="shrink-0">
+                                <img src="{{ $ticket->getQrCodeDataUri() }}" alt="QR Code" class="size-20 rounded-md bg-white p-1 border border-zinc-200 dark:border-zinc-600 shadow-2xs" />
                             </div>
                         </div>
                     </div>

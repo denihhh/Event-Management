@@ -57,7 +57,7 @@ class EventAttendees extends Component
                 return;
             }
 
-            fputcsv($handle, ['Ticket Code', 'Attendee Name', 'Attendee Email', 'Registration Date', 'Reminder Sent']);
+            fputcsv($handle, ['Ticket Code', 'Attendee Name', 'Attendee Email', 'Registration Date', 'Reminder Sent', 'Checked In', 'Checked In At']);
 
             foreach ($tickets as $ticket) {
                 fputcsv($handle, [
@@ -66,6 +66,8 @@ class EventAttendees extends Component
                     $ticket->user ? $ticket->user->email : 'N/A',
                     $ticket->created_at->format('Y-m-d H:i:s'),
                     $ticket->reminder_sent ? 'Yes' : 'No',
+                    $ticket->isCheckedIn() ? 'Yes' : 'No',
+                    $ticket->checked_in_at ? $ticket->checked_in_at->format('Y-m-d H:i:s') : 'N/A',
                 ]);
             }
 

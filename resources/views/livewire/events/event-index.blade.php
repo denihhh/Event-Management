@@ -38,19 +38,19 @@
     @else
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @foreach ($events as $event)
-                <flux:card key="{{ $event->id }}" class="flex flex-col justify-between hover:shadow-md transition-shadow">
-                    <div class="space-y-4">
-                        <div class="flex items-start justify-between gap-2">
-                            <flux:badge size="sm" color="purple" icon="user">
-                                {{ $event->organizer->name }}
+                <flux:card wire:key="event-{{ $event->id }}" class="flex flex-col justify-between hover:shadow-md transition-shadow min-w-0 overflow-hidden">
+                    <div class="space-y-4 min-w-0">
+                        <div class="flex flex-wrap items-center justify-between gap-2 min-w-0">
+                            <flux:badge size="sm" color="purple" icon="user" class="max-w-[70%] shrink-0">
+                                <span class="truncate inline-block max-w-[130px] sm:max-w-[170px]">{{ $event->organizer->name }}</span>
                             </flux:badge>
 
                             @if ($event->isSoldOut())
-                                <flux:badge size="sm" color="red">Sold Out</flux:badge>
+                                <flux:badge size="sm" color="red" class="shrink-0">Sold Out</flux:badge>
                             @elseif ($event->remainingTickets() <= 5)
-                                <flux:badge size="sm" color="amber">{{ $event->remainingTickets() }} left</flux:badge>
+                                <flux:badge size="sm" color="amber" class="shrink-0">{{ $event->remainingTickets() }} left</flux:badge>
                             @else
-                                <flux:badge size="sm" color="emerald">{{ $event->remainingTickets() }} available</flux:badge>
+                                <flux:badge size="sm" color="emerald" class="shrink-0">{{ $event->remainingTickets() }} available</flux:badge>
                             @endif
                         </div>
 

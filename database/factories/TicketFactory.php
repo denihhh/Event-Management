@@ -35,4 +35,14 @@ class TicketFactory extends Factory
             'reminder_sent' => true,
         ]);
     }
+
+    /**
+     * Indicate that the ticket has been checked in.
+     */
+    public function checkedIn(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'checked_in_at' => now(),
+        ]);
+    }
 }

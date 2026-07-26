@@ -10,20 +10,20 @@ The Laravel Boost guidelines are specifically curated by Laravel maintainers for
 This application is a Laravel application and its main Laravel ecosystems package & versions are below. You are an expert with them all. Ensure you abide by these specific packages & versions.
 
 - php - 8.4
-- laravel/fortify (FORTIFY) - v1 (1.37.2)
-- laravel/framework (LARAVEL) - v13 (13.20.0)
-- laravel/prompts (PROMPTS) - v0 (0.3.21)
-- livewire/flux (FLUXUI_FREE) - v2 (2.15.0)
-- livewire/livewire (LIVEWIRE) - v4 (4.3.3)
-- larastan/larastan (LARASTAN) - v3 (3.10.0)
-- laravel/boost (BOOST) - v2 (2.4.13)
-- laravel/mcp (MCP) - v0 (0.9.0)
-- laravel/pail (PAIL) - v1 (1.2.7)
-- laravel/pint (PINT) - v1 (1.29.3)
-- laravel/sail (SAIL) - v1 (1.63.0)
-- pestphp/pest (PEST) - v4 (4.7.5)
-- phpunit/phpunit (PHPUNIT) - v12 (12.5.30)
-- tailwindcss (TAILWINDCSS) - v4 (4.3.3)
+- laravel/fortify (FORTIFY) - v1
+- laravel/framework (LARAVEL) - v13
+- laravel/prompts (PROMPTS) - v0
+- livewire/flux (FLUXUI_FREE) - v2
+- livewire/livewire (LIVEWIRE) - v4
+- larastan/larastan (LARASTAN) - v3
+- laravel/boost (BOOST) - v2
+- laravel/mcp (MCP) - v0
+- laravel/pail (PAIL) - v1
+- laravel/pint (PINT) - v1
+- laravel/sail (SAIL) - v1
+- pestphp/pest (PEST) - v4
+- phpunit/phpunit (PHPUNIT) - v12
+- tailwindcss (TAILWINDCSS) - v4
 
 ## Skills Activation
 

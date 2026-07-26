@@ -27,7 +27,7 @@
                 {{-- Module 2: Event Operations --}}
                 <flux:sidebar.group :heading="__('Event Operations')" class="grid mb-4">
                     @if (auth()->user()?->isOrganizer() || auth()->user()?->isAdmin())
-                        <flux:sidebar.item icon="building-office-2" :href="route('organizer.events.index')" :current="request()->routeIs('organizer.events.index') || request()->routeIs('organizer.events.edit') || request()->routeIs('organizer.events.create')" wire:navigate>
+                        <flux:sidebar.item icon="building-office-2" :href="route('organizer.events.index')" :current="request()->routeIs('organizer.events.index') || request()->routeIs('organizer.events.edit') || request()->routeIs('organizer.events.create') || request()->routeIs('organizer.events.check-in')" wire:navigate>
                             {{ __('Managed Events') }}
                         </flux:sidebar.item>
                         <flux:sidebar.item icon="users" :href="route('organizer.attendees.index')" :current="request()->routeIs('organizer.attendees.*') || request()->routeIs('organizer.events.attendees')" wire:navigate>
@@ -123,8 +123,6 @@
                 </flux:menu>
             </flux:dropdown>
         </flux:header>
-
-        @include('partials.impersonation-banner')
 
         {{ $slot }}
 

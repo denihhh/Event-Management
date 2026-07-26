@@ -71,9 +71,10 @@
             </flux:sidebar.nav>
         </flux:sidebar>
 
-        @include('partials.impersonation-banner')
-
-        {{ $slot }}
+        <flux:main>
+            @include('partials.impersonation-banner')
+            {{ $slot }}
+        </flux:main>
 
         @persist('toast')
             <flux:toast.group>

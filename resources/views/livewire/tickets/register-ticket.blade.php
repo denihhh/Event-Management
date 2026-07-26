@@ -21,7 +21,7 @@
         </flux:button>
     @endif
 
-    <flux:modal wire:model="showModal" class="space-y-6">
+    <flux:modal wire:model="showModal" class="space-y-6 backdrop:backdrop-blur-sm backdrop:bg-black/50">
         <div>
             <flux:heading size="lg">Confirm Ticket Registration</flux:heading>
             <flux:subheading>Claim your digital ticket for {{ $event->title }}.</flux:subheading>

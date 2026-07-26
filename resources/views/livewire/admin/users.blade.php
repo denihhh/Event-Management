@@ -6,14 +6,24 @@
         </div>
     </div>
 
-    <!-- Search Toolbar -->
-    <div class="max-w-md">
-        <flux:input
-            wire:model.live.debounce.300ms="search"
-            icon="magnifying-glass"
-            placeholder="{{ __('Search by name or email...') }}"
-            clearable
-        />
+    <!-- Search & Role Filter Toolbar -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="md:col-span-2">
+            <flux:input
+                wire:model.live.debounce.300ms="search"
+                icon="magnifying-glass"
+                placeholder="{{ __('Search by name or email...') }}"
+                clearable
+            />
+        </div>
+        <div>
+            <flux:select wire:model.live="role" placeholder="{{ __('Filter by role') }}">
+                <flux:select.option value="all">{{ __('All Roles') }}</flux:select.option>
+                <flux:select.option value="admin">{{ __('Admin Only') }}</flux:select.option>
+                <flux:select.option value="organizer">{{ __('Organizer Only') }}</flux:select.option>
+                <flux:select.option value="attendee">{{ __('Attendee Only') }}</flux:select.option>
+            </flux:select>
+        </div>
     </div>
 
     <!-- User Roster Table -->
@@ -27,7 +37,7 @@
 
             <flux:table.rows>
                 @forelse ($this->users as $user)
-                    <flux:table.row key="{{ $user->id }}">
+                    <flux:table.row wire:key="user-{{ $user->id }}">
                         <flux:table.cell class="px-4 py-3.5 first:pl-6 last:pr-6">
                             <div class="flex items-center gap-3 py-0.5">
                                 <flux:avatar
@@ -80,7 +90,7 @@
                     <flux:table.row>
                         <flux:table.cell colspan="3" class="py-10 text-center px-4 first:pl-6 last:pr-6">
                             <p class="text-zinc-400 text-sm">
-                                {{ $search ? __('No users match your search.') : __('No other users found.') }}
+                                {{ ($search || $role !== 'all') ? __('No users match your search or role filter.') : __('No other users found.') }}
                             </p>
                         </flux:table.cell>
                     </flux:table.row>

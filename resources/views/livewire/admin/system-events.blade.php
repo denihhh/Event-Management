@@ -46,7 +46,7 @@
 
                 <flux:table.rows>
                     @foreach ($events as $event)
-                        <flux:table.row key="{{ $event->id }}">
+                        <flux:table.row wire:key="event-{{ $event->id }}">
                             <flux:table.cell class="font-medium px-4 py-3.5 first:pl-6 last:pr-6">
                                 <div class="space-y-0.5">
                                     <a href="{{ route('events.show', $event) }}" target="_blank" class="hover:underline flex items-center gap-1.5 font-semibold text-sm">

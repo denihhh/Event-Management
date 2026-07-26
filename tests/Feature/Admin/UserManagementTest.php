@@ -59,6 +59,26 @@ it('filters users by search query', function (): void {
         ->assertDontSee('Carol Carpenter');
 });
 
+it('filters users by role', function (): void {
+    $admin = User::factory()->admin()->create();
+    $otherAdmin = User::factory()->admin()->create(['name' => 'Second Admin']);
+    $organizer = User::factory()->organizer()->create(['name' => 'Event Organizer']);
+    $attendee = User::factory()->create(['name' => 'Regular Attendee']);
+
+    Livewire::actingAs($admin)
+        ->test(Users::class)
+        ->set('role', 'organizer')
+        ->assertSee('Event Organizer')
+        ->assertDontSee('Second Admin')
+        ->assertDontSee('Regular Attendee')
+        ->set('role', 'attendee')
+        ->assertSee('Regular Attendee')
+        ->assertDontSee('Event Organizer')
+        ->set('role', 'admin')
+        ->assertSee('Second Admin')
+        ->assertDontSee('Regular Attendee');
+});
+
 // ──────────────────────────────────────────────────────────────────────────────
 // Impersonation via Livewire action
 // ──────────────────────────────────────────────────────────────────────────────

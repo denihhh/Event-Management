@@ -7,6 +7,7 @@ use App\Livewire\Admin\SystemStatus;
 use App\Livewire\Admin\Users;
 use App\Livewire\Events\EventIndex;
 use App\Livewire\Events\EventShow;
+use App\Livewire\Organizer\CheckInAttendees;
 use App\Livewire\Organizer\EventAttendees;
 use App\Livewire\Organizer\EventCreate;
 use App\Livewire\Organizer\EventEdit;
@@ -33,6 +34,7 @@ Route::middleware(['auth', 'verified', EnsureUserIsOrganizer::class])->group(fun
     Route::get('/organizer/events/create', EventCreate::class)->name('organizer.events.create');
     Route::get('/organizer/events/{event}/edit', EventEdit::class)->name('organizer.events.edit');
     Route::get('/organizer/events/{event}/attendees', EventAttendees::class)->name('organizer.events.attendees');
+    Route::get('/organizer/events/{event}/check-in', CheckInAttendees::class)->name('organizer.events.check-in');
     Route::get('/organizer/attendees', GlobalAttendees::class)->name('organizer.attendees.index');
 });
 

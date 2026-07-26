@@ -11,14 +11,25 @@
         </div>
     </div>
 
-    <!-- Search Toolbar -->
-    <div class="max-w-md">
-        <flux:input
-            wire:model.live.debounce.300ms="search"
-            icon="magnifying-glass"
-            placeholder="{{ __('Search by name, email, event, or ticket code...') }}"
-            clearable
-        />
+    <!-- Toolbar (Search & Event Filter) -->
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="w-full sm:w-80">
+            <flux:input
+                wire:model.live.debounce.300ms="search"
+                icon="magnifying-glass"
+                placeholder="{{ __('Search by name, email, event, or ticket code...') }}"
+                clearable
+            />
+        </div>
+
+        <div class="flex items-center gap-2 w-full sm:w-auto">
+            <flux:select wire:model.live="eventId" class="w-64">
+                <option value="all">{{ __('All Events') }}</option>
+                @foreach ($this->events as $event)
+                    <option value="{{ $event->id }}">{{ $event->title }}</option>
+                @endforeach
+            </flux:select>
+        </div>
     </div>
 
     @if ($tickets->isEmpty())
@@ -39,8 +50,8 @@
                 </flux:table.columns>
 
                 <flux:table.rows>
-                    @foreach ($tickets as $ticket)
-                        <flux:table.row key="{{ $ticket->id }}">
+                    @forelse ($tickets as $ticket)
+                        <flux:table.row wire:key="ticket-{{ $ticket->id }}">
                             <flux:table.cell class="px-4 py-3.5 first:pl-6 last:pr-6">
                                 <div class="min-w-0 py-0.5">
                                     <p class="font-medium truncate text-sm text-zinc-900 dark:text-zinc-100">{{ $ticket->user?->name ?? 'N/A' }}</p>
