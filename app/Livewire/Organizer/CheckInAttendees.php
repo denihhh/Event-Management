@@ -31,7 +31,7 @@ class CheckInAttendees extends Component
 
     public function mount(Event $event): void
     {
-        $this->authorize('update', $event);
+        $this->authorize('manageRoster', $event);
         $this->event = $event;
     }
 
@@ -50,6 +50,12 @@ class CheckInAttendees extends Component
      */
     public function scanCheckIn(): void
     {
+        if ($this->event->hasEnded()) {
+            Flux::toast(variant: 'warning', text: __('Check-in is closed for concluded events.'));
+
+            return;
+        }
+
         $code = trim($this->ticketInput);
 
         if (empty($code)) {
@@ -64,6 +70,12 @@ class CheckInAttendees extends Component
 
         if (! $ticket) {
             Flux::toast(variant: 'danger', text: __('Ticket code not found for this event.'));
+
+            return;
+        }
+
+        if ($ticket->isCancelled()) {
+            Flux::toast(variant: 'danger', text: __('This ticket was cancelled and is void.'));
 
             return;
         }
@@ -95,11 +107,23 @@ class CheckInAttendees extends Component
      */
     public function checkIn(int $ticketId): void
     {
+        if ($this->event->hasEnded()) {
+            Flux::toast(variant: 'warning', text: __('Check-in is closed for concluded events.'));
+
+            return;
+        }
+
         /** @var Ticket|null $ticket */
         $ticket = $this->event->tickets()->with('user')->find($ticketId);
 
         if (! $ticket) {
             Flux::toast(variant: 'danger', text: __('Ticket not found.'));
+
+            return;
+        }
+
+        if ($ticket->isCancelled()) {
+            Flux::toast(variant: 'danger', text: __('This ticket was cancelled and is void.'));
 
             return;
         }
@@ -117,6 +141,12 @@ class CheckInAttendees extends Component
      */
     public function undoCheckIn(int $ticketId): void
     {
+        if ($this->event->hasEnded()) {
+            Flux::toast(variant: 'warning', text: __('Check-in status cannot be modified for concluded events.'));
+
+            return;
+        }
+
         /** @var Ticket|null $ticket */
         $ticket = $this->event->tickets()->with('user')->find($ticketId);
 
@@ -144,6 +174,7 @@ class CheckInAttendees extends Component
     {
         $query = $this->event->tickets()
             ->with('user')
+            ->whereNull('cancelled_at')
             ->latest('created_at');
 
         if (filled($this->search)) {
@@ -174,8 +205,8 @@ class CheckInAttendees extends Component
     #[Computed]
     public function stats(): array
     {
-        $total = $this->event->tickets()->count();
-        $checkedIn = $this->event->tickets()->whereNotNull('checked_in_at')->count();
+        $total = $this->event->tickets()->whereNull('cancelled_at')->count();
+        $checkedIn = $this->event->tickets()->whereNull('cancelled_at')->whereNotNull('checked_in_at')->count();
         $pending = max(0, $total - $checkedIn);
         $percentage = $total > 0 ? (int) round(($checkedIn / $total) * 100) : 0;
 

@@ -23,6 +23,7 @@ class OrganizerEventIndex extends Component
     public function confirmDelete(int $eventId): void
     {
         $this->deletingEventId = $eventId;
+        Flux::modal('cancel-event-modal')->show();
     }
 
     public function deleteEvent(): void
@@ -39,15 +40,20 @@ class OrganizerEventIndex extends Component
         if (! $event) {
             Flux::toast(variant: 'danger', text: __('Event not found or unauthorized.'));
             $this->deletingEventId = null;
+            Flux::modal('cancel-event-modal')->close();
 
             return;
         }
 
         Gate::authorize('delete', $event);
 
-        // Notify attendees before soft-deleting
+        // Mark tickets as cancelled and notify attendees before soft-deleting
         $startsAtFormatted = $event->starts_at->format('F j, Y \a\t g:i A');
         foreach ($event->tickets as $ticket) {
+            if (! $ticket->isCancelled()) {
+                $ticket->update(['cancelled_at' => now()]);
+            }
+
             if ($ticket->user) {
                 Mail::to($ticket->user)->queue(new EventCancelledMail(
                     eventTitle: $event->title,
@@ -60,6 +66,7 @@ class OrganizerEventIndex extends Component
         $event->delete();
 
         $this->deletingEventId = null;
+        Flux::modal('cancel-event-modal')->close();
         Flux::toast(variant: 'success', text: __('Event cancelled and attendees notified.'));
     }
 

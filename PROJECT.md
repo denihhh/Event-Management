@@ -38,18 +38,21 @@ A web application designed for event organizers to publish public events with fi
 - **Has many:** Tickets (`tickets()`, `@return HasMany<Ticket, $this>`)
 - **Soft Deletes:** `SoftDeletes` trait (`deleted_at`).
 - **Attributes:** `id`, `user_id`, `title`, `description`, `starts_at`, `location`, `capacity`, `tickets_sold`, `created_at`, `updated_at`, `deleted_at`.
+- **Lifecycle Methods:** `hasStarted(): bool` (`starts_at <= now()`), `hasEnded(): bool` (`now() > starts_at->addHours(24)` to support late-night events up to 24h after start).
 
 ### Tickets (`tickets`)
 - **Belongs to:** User (`user()`, `@return BelongsTo<User, $this>`), Event (`event()`, `@return BelongsTo<Event, $this>`)
-- **Attributes:** `id`, `event_id`, `user_id`, `ticket_code` (UUID string), `reminder_sent` (boolean), `timestamps`.
+- **Attributes:** `id`, `event_id`, `user_id`, `ticket_code` (UUID string), `reminder_sent` (boolean), `checked_in_at` (datetime, nullable), `cancelled_at` (datetime, nullable), `timestamps`.
+- **Helper Methods:** `isCheckedIn(): bool`, `isCancelled(): bool`.
 
 ---
 
 ## 4. Key Functional Features & Architecture
 
-### A. Event Management (Organizers & Admins)
+### A. Event Management & Past Event Lifecycle Controls (Organizers & Admins)
 - Create, edit, publish, and soft-delete public events.
 - Capacity enforcement with real-time remaining ticket counts.
+- **Past Event Restrictions:** Events that have concluded (`$event->hasEnded()`) lock `Edit Event` and `Cancel Event` actions to protect historical audit records. `Door Check-In` opens in post-event audit mode.
 - Attendee roster viewing with real-time search and streaming CSV export (`GlobalAttendees` at `/organizer/attendees`).
 
 ### B. Organizer Analytics Dashboard
@@ -64,6 +67,8 @@ A web application designed for event organizers to publish public events with fi
 - One-click ticket registration.
 - **Concurrency Prevention:** `DB::transaction()` with pessimistic database locking (`lockForUpdate()`) on the `Event` record to guarantee capacity is never exceeded.
 - Dispatch queued email (`EventTicketMail`) containing digital ticket credentials upon ticket creation (dispatched after database transaction commit).
+- **Soft Ticket Cancellation & Re-Claiming:** Attendees can soft-cancel active tickets before event start time (`cancelled_at = now()`), releasing event capacity (`tickets_sold` decremented). Cancelled tickets remain in **My Tickets** as an audit record with voided pass UI. If capacity remains, attendees can re-claim passes (reactivating the record with a fresh UUID ticket code).
+- **4-State Ticket Presentation (`My Tickets`):** Segmented filter tabs (`All`, `Active`, `Checked In`, `Past`, `Cancelled`) with distinct card designs for `Active Pass` (purple/emerald), `Checked In` (teal stamp), `Past Event` (grayscale expired), and `Cancelled` (red voided pass).
 
 ### D. Organizer Request & Approval Workflow
 - Attendees apply to become an organizer via `/event-operation/become-organizer` (`route('become-organizer.edit')`) or via Module 2 "Apply Organizer".

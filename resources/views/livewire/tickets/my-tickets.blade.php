@@ -1,15 +1,52 @@
 <div class="space-y-6">
-    <div>
-        <flux:heading size="xl" level="1">My Tickets</flux:heading>
-        <flux:subheading>Manage your event passes and digital ticket codes.</flux:subheading>
+    <style media="print">
+        @media print {
+            body * {
+                visibility: hidden !important;
+            }
+            .print-ticket-target, .print-ticket-target * {
+                visibility: visible !important;
+            }
+            .print-ticket-target {
+                position: absolute !important;
+                left: 0 !important;
+                top: 0 !important;
+                width: 100% !important;
+                border: 1px solid #d4d4d8 !important;
+                background-color: #ffffff !important;
+                color: #09090b !important;
+                box-shadow: none !important;
+                padding: 1.5rem !important;
+                border-radius: 0.75rem !important;
+            }
+            .print-ticket-target [data-flux-dropdown],
+            .print-ticket-target button {
+                display: none !important;
+            }
+        }
+    </style>
+
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+            <flux:heading size="xl" level="1">My Tickets</flux:heading>
+            <flux:subheading>Manage your event passes and digital ticket codes.</flux:subheading>
+        </div>
+
+        <flux:radio.group wire:model.live="filter" variant="segmented" size="sm">
+            <flux:radio value="all" label="All" />
+            <flux:radio value="active" label="Active" />
+            <flux:radio value="checked_in" label="Checked In" />
+            <flux:radio value="past" label="Past" />
+            <flux:radio value="cancelled" label="Cancelled" />
+        </flux:radio.group>
     </div>
 
     @if ($tickets->isEmpty())
         <div class="text-center py-16 bg-white dark:bg-zinc-800/50 rounded-xl border border-zinc-200 dark:border-zinc-700/60 p-8 space-y-4">
             <flux:icon name="ticket" class="mx-auto size-12 text-zinc-400" />
-            <flux:heading size="lg">No tickets claimed yet</flux:heading>
+            <flux:heading size="lg">No tickets found</flux:heading>
             <p class="text-sm text-zinc-500 max-w-md mx-auto">
-                Explore upcoming events and claim your free digital tickets to see them listed here.
+                No ticket passes match your selected filter. Explore upcoming events to claim digital passes.
             </p>
             <flux:button variant="primary" :href="route('events.index')" wire:navigate>
                 Browse Events
@@ -18,64 +55,186 @@
     @else
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             @foreach ($tickets as $ticket)
-                <flux:card wire:key="ticket-{{ $ticket->id }}" class="space-y-4 flex flex-col justify-between">
-                    <div class="space-y-3">
-                        <div class="flex items-start justify-between gap-2">
-                            <flux:badge color="purple" size="sm" icon="user">
-                                {{ $ticket->event->organizer->name }}
+                @php
+                    $isCancelled = $ticket->isCancelled();
+                    $isCheckedIn = $ticket->isCheckedIn();
+                    $hasStarted = $ticket->event->hasStarted();
+                @endphp
+
+                <flux:card wire:key="ticket-{{ $ticket->id }}" class="printable-ticket-card space-y-4 flex flex-col justify-between transition-all min-w-0 overflow-hidden bg-white dark:bg-zinc-900 shadow-sm border {{ $isCancelled ? 'border-red-500/30 dark:border-red-900/40 bg-zinc-50/50 dark:bg-zinc-900/50' : ($isCheckedIn ? 'border-teal-500/40 dark:border-teal-900/50' : ($hasStarted ? 'border-zinc-200 dark:border-zinc-800 opacity-90' : 'border-purple-500/30 dark:border-purple-900/40')) }}">
+                    <div class="space-y-3 min-w-0">
+                        <div class="flex items-center justify-between gap-2 min-w-0">
+                            <flux:badge color="purple" size="sm" icon="user" class="shrink-0 max-w-[60%] font-semibold">
+                                <span class="truncate">{{ $ticket->event->organizer->name }}</span>
                             </flux:badge>
 
-                            @if ($ticket->isCheckedIn())
-                                <flux:badge color="teal" size="sm" icon="check-circle">
-                                    Checked In ({{ $ticket->checked_in_at?->format('g:i A') }})
-                                </flux:badge>
-                            @elseif ($ticket->event->hasStarted())
-                                <flux:badge color="zinc" size="sm">Past Event</flux:badge>
-                            @else
-                                <flux:badge color="emerald" size="sm">Active Ticket</flux:badge>
-                            @endif
+                            <div class="flex items-center gap-1.5 shrink-0">
+                                @if ($isCancelled)
+                                    <flux:badge color="red" size="sm" icon="x-circle" class="shrink-0 font-semibold">
+                                        Cancelled
+                                    </flux:badge>
+                                @elseif ($isCheckedIn)
+                                    <flux:badge color="teal" size="sm" icon="check-circle" class="shrink-0 font-semibold">
+                                        Checked In
+                                    </flux:badge>
+                                @elseif ($hasStarted)
+                                    <flux:badge color="zinc" size="sm" icon="clock" class="shrink-0 font-semibold">
+                                        Past Event
+                                    </flux:badge>
+                                @else
+                                    <flux:badge color="emerald" size="sm" icon="ticket" class="shrink-0 font-semibold">
+                                        Active Pass
+                                    </flux:badge>
+                                @endif
+
+                                @if (! $ticket->event?->trashed() || (! $isCancelled && ! $isCheckedIn && ! $hasStarted))
+                                    <flux:dropdown align="end">
+                                        <flux:button variant="subtle" icon="ellipsis-vertical" size="sm" aria-label="{{ __('Ticket Options') }}" />
+
+                                        <flux:menu>
+                                            @if (! $ticket->event?->trashed())
+                                                <flux:menu.item icon="eye" :href="route('events.show', $ticket->event)" wire:navigate>
+                                                    {{ __('View Details') }}
+                                                </flux:menu.item>
+                                            @endif
+                                            @if (! $isCancelled && ! $isCheckedIn && ! $hasStarted)
+                                                <flux:menu.item icon="printer" x-on:click="
+                                                    document.querySelectorAll('.printable-ticket-card').forEach(el => el.classList.remove('print-ticket-target'));
+                                                    $el.closest('.printable-ticket-card').classList.add('print-ticket-target');
+                                                    window.print();
+                                                ">
+                                                    {{ __('Print Pass') }}
+                                                </flux:menu.item>
+                                                <flux:menu.separator />
+                                                <flux:menu.item icon="x-circle" variant="danger" wire:click="confirmCancel({{ $ticket->id }})">
+                                                    {{ __('Cancel Ticket') }}
+                                                </flux:menu.item>
+                                            @endif
+                                        </flux:menu>
+                                    </flux:dropdown>
+                                @endif
+                            </div>
                         </div>
 
                         <flux:heading size="lg">
-                            <a href="{{ route('events.show', $ticket->event) }}" wire:navigate class="hover:underline">
-                                {{ $ticket->event->title }}
-                            </a>
+                            @if ($ticket->event?->trashed())
+                                <span class="text-zinc-800 dark:text-zinc-200 font-bold opacity-80" title="{{ __('This event has been cancelled by the organizer.') }}">
+                                    {{ $ticket->event->title }}
+                                </span>
+                            @else
+                                <a href="{{ route('events.show', $ticket->event) }}" wire:navigate class="hover:underline text-zinc-900 dark:text-white font-bold">
+                                    {{ $ticket->event->title }}
+                                </a>
+                            @endif
                         </flux:heading>
 
-                        <div class="space-y-1.5 text-xs text-zinc-500 dark:text-zinc-400">
+                        <div class="space-y-1.5 text-xs text-zinc-700 dark:text-zinc-300 font-medium">
                             <div class="flex items-center gap-2">
-                                <flux:icon name="calendar" class="size-4 text-zinc-400" />
+                                <flux:icon name="calendar" class="size-4 text-purple-700 dark:text-purple-400 shrink-0" />
                                 <span>{{ $ticket->event->starts_at->format('l, F j, Y \a\t g:i A') }}</span>
                             </div>
                             <div class="flex items-center gap-2">
-                                <flux:icon name="map-pin" class="size-4 text-zinc-400" />
-                                <span>{{ $ticket->event->location }}</span>
+                                <flux:icon name="map-pin" class="size-4 text-purple-700 dark:text-purple-400 shrink-0" />
+                                <span class="truncate">{{ $ticket->event->location }}</span>
                             </div>
                         </div>
 
                         <!-- Ticket Pass & QR Code Box -->
-                        <div class="p-3 bg-zinc-50 dark:bg-zinc-800 rounded-lg border border-zinc-200 dark:border-zinc-700 flex items-center justify-between gap-4">
-                            <div class="space-y-1">
-                                <span class="text-xs uppercase tracking-wider text-zinc-400 font-semibold">Digital Ticket Pass Code</span>
-                                <div class="font-mono text-xs font-bold text-purple-600 dark:text-purple-400 select-all break-all">
-                                    {{ $ticket->ticket_code }}
+                        @if ($isCancelled)
+                            <!-- 1. CANCELLED STATE -->
+                            <div class="p-3.5 bg-red-50/80 dark:bg-red-950/40 rounded-xl border border-red-200/90 dark:border-red-900/60 flex items-center justify-between gap-4">
+                                <div class="space-y-1 min-w-0">
+                                    <span class="text-xs uppercase tracking-wider text-red-800 dark:text-red-300 font-bold">Pass Status</span>
+                                    <div class="font-mono text-xs text-zinc-500 dark:text-zinc-400 line-through select-all break-all">
+                                        {{ $ticket->ticket_code }}
+                                    </div>
+                                    @if ($ticket->event?->trashed())
+                                        <p class="text-[11px] text-red-700 dark:text-red-400 font-bold">Event was cancelled by organizer</p>
+                                    @else
+                                        <p class="text-[11px] text-red-700 dark:text-red-400 font-medium">Reservation cancelled on {{ $ticket->cancelled_at?->format('M j, Y') }}</p>
+                                    @endif
+                                </div>
+                                <div class="shrink-0 p-2 rounded-lg bg-red-100 dark:bg-red-950/80 border border-red-200 dark:border-red-900 text-red-800 dark:text-red-300 flex flex-col items-center justify-center size-20 text-[10px] font-bold text-center">
+                                    <flux:icon name="x-circle" class="size-7 mb-0.5 text-red-700 dark:text-red-400" />
+                                    <span>Pass Void</span>
                                 </div>
                             </div>
-                            <div class="shrink-0">
-                                <img src="{{ $ticket->getQrCodeDataUri() }}" alt="QR Code" class="size-20 rounded-md bg-white p-1 border border-zinc-200 dark:border-zinc-600 shadow-2xs" />
+                        @elseif ($isCheckedIn)
+                            <!-- 2. CHECKED-IN STATE -->
+                            <div class="p-3.5 bg-teal-50/80 dark:bg-teal-950/40 rounded-xl border border-teal-200/90 dark:border-teal-900/60 flex items-center justify-between gap-4">
+                                <div class="space-y-1 min-w-0">
+                                    <span class="text-xs uppercase tracking-wider text-teal-800 dark:text-teal-300 font-bold">Door Pass Code</span>
+                                    <div class="font-mono text-xs font-extrabold text-teal-900 dark:text-teal-100 select-all break-all">
+                                        {{ $ticket->ticket_code }}
+                                    </div>
+                                    <p class="text-[11px] text-teal-800 dark:text-teal-300 font-semibold">Checked in at door ({{ $ticket->checked_in_at?->format('g:i A') }})</p>
+                                </div>
+                                <div class="relative shrink-0 overflow-hidden rounded-lg border border-teal-300 dark:border-teal-700 shadow-xs">
+                                    <img src="{{ $ticket->getQrCodeDataUri() }}" alt="QR Code" class="size-20 bg-white p-1 opacity-40 grayscale" />
+                                    <div class="absolute inset-0 bg-teal-950/40 dark:bg-teal-950/70 backdrop-blur-[2px] flex flex-col items-center justify-center text-center p-1 rounded-lg">
+                                        <div class="size-6 rounded-full bg-teal-700 dark:bg-teal-500 text-white flex items-center justify-center mb-0.5 shadow-xs">
+                                            <flux:icon name="check" class="size-4 stroke-[3]" />
+                                        </div>
+                                        <span class="text-[10px] font-bold tracking-wide uppercase text-white drop-shadow-xs">Redeemed</span>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
+                        @elseif ($hasStarted)
+                            <!-- 3. PAST EVENT STATE -->
+                            <div class="p-3.5 bg-zinc-100 dark:bg-zinc-800/60 rounded-xl border border-zinc-200 dark:border-zinc-700 flex items-center justify-between gap-4">
+                                <div class="space-y-1 min-w-0">
+                                    <span class="text-xs uppercase tracking-wider text-zinc-600 dark:text-zinc-400 font-semibold">Expired Pass Code</span>
+                                    <div class="font-mono text-xs font-semibold text-zinc-800 dark:text-zinc-300 select-all break-all">
+                                        {{ $ticket->ticket_code }}
+                                    </div>
+                                    <p class="text-[11px] text-zinc-600 dark:text-zinc-400 font-medium">Event ended on {{ $ticket->event->starts_at->format('M j, Y') }}</p>
+                                </div>
+                                <div class="relative shrink-0 overflow-hidden rounded-lg border border-zinc-300 dark:border-zinc-700 shadow-xs">
+                                    <img src="{{ $ticket->getQrCodeDataUri() }}" alt="QR Code" class="size-20 bg-white p-1 opacity-30 grayscale" />
+                                    <div class="absolute inset-0 bg-zinc-900/50 backdrop-blur-[1px] flex flex-col items-center justify-center text-center p-1 rounded-lg">
+                                        <flux:icon name="clock" class="size-6 text-zinc-200 mb-0.5" />
+                                        <span class="text-[10px] font-bold tracking-wide uppercase text-white drop-shadow-xs">Expired</span>
+                                    </div>
+                                </div>
+                            </div>
+                        @else
+                            <!-- 4. ACTIVE TICKET STATE -->
+                            <div class="p-3.5 bg-purple-50/70 dark:bg-purple-950/30 rounded-xl border border-purple-200/90 dark:border-purple-900/60 flex items-center justify-between gap-4">
+                                <div class="space-y-1 min-w-0">
+                                    <span class="text-xs uppercase tracking-wider text-purple-800 dark:text-purple-300 font-bold">Digital Ticket Pass Code</span>
+                                    <div class="font-mono text-xs font-extrabold text-purple-900 dark:text-purple-100 select-all break-all">
+                                        {{ $ticket->ticket_code }}
+                                    </div>
+                                    <p class="text-[11px] text-purple-700 dark:text-purple-300 font-semibold">Valid for event entry</p>
+                                </div>
+                                <div class="shrink-0">
+                                    <img src="{{ $ticket->getQrCodeDataUri() }}" alt="QR Code" class="size-20 rounded-lg bg-white p-1 border border-purple-200 dark:border-purple-800 shadow-xs" />
+                                </div>
+                            </div>
+                        @endif
                     </div>
 
-                    <div class="pt-3 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
-                        <span class="text-xs text-zinc-400">
+                    <div class="pt-3 border-t border-zinc-200 dark:border-zinc-800 flex items-center justify-between">
+                        <span class="text-xs text-zinc-600 dark:text-zinc-400 font-medium">
                             Claimed {{ $ticket->created_at->diffForHumans() }}
                         </span>
 
-                        @if (! $ticket->event->hasStarted())
-                            <flux:button variant="danger" size="sm" wire:click="confirmCancel({{ $ticket->id }})">
-                                Cancel Ticket
-                            </flux:button>
+                        @if ($isCancelled)
+                            <span class="text-xs font-bold text-red-700 dark:text-red-400">
+                                Cancelled {{ $ticket->cancelled_at?->diffForHumans() }}
+                            </span>
+                        @elseif ($isCheckedIn)
+                            <span class="text-xs font-bold text-teal-800 dark:text-teal-300">
+                                Checked in {{ $ticket->checked_in_at?->diffForHumans() }}
+                            </span>
+                        @elseif ($hasStarted)
+                            <span class="text-xs font-semibold text-zinc-600 dark:text-zinc-400">
+                                Event Concluded
+                            </span>
+                        @else
+                            <span class="text-xs font-bold text-purple-700 dark:text-purple-300">
+                                Starts {{ $ticket->event->starts_at->diffForHumans() }}
+                            </span>
                         @endif
                     </div>
                 </flux:card>
@@ -88,20 +247,22 @@
     @endif
 
     <!-- Cancel Confirmation Modal -->
-    <flux:modal :open="(bool) $cancellingTicketId" wire:close="$set('cancellingTicketId', null)">
-        <div class="space-y-4">
+    <flux:modal name="cancel-ticket-modal" class="space-y-4 backdrop:backdrop-blur-sm backdrop:bg-black/50">
+        <div>
             <flux:heading size="lg">Cancel Ticket?</flux:heading>
-            <p class="text-sm text-zinc-500">
+            <p class="text-sm text-zinc-500 mt-1">
                 Are you sure you want to cancel this ticket? Your reservation will be released back to the event capacity.
             </p>
-            <div class="flex justify-end gap-3 pt-2">
-                <flux:button variant="subtle" wire:click="$set('cancellingTicketId', null)">
+        </div>
+        <div class="flex justify-end gap-3 pt-2">
+            <flux:modal.close>
+                <flux:button variant="subtle">
                     Keep Ticket
                 </flux:button>
-                <flux:button variant="danger" wire:click="cancelTicket">
-                    Yes, Cancel Ticket
-                </flux:button>
-            </div>
+            </flux:modal.close>
+            <flux:button variant="danger" wire:click="cancelTicket" wire:loading.attr="disabled">
+                Yes, Cancel Ticket
+            </flux:button>
         </div>
     </flux:modal>
 </div>

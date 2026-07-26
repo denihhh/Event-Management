@@ -19,10 +19,11 @@ use Illuminate\Support\Str;
  * @property string $ticket_code
  * @property bool $reminder_sent
  * @property Carbon|null $checked_in_at
+ * @property Carbon|null $cancelled_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['event_id', 'user_id', 'reminder_sent', 'checked_in_at'])]
+#[Fillable(['event_id', 'user_id', 'ticket_code', 'reminder_sent', 'checked_in_at', 'cancelled_at'])]
 class Ticket extends Model
 {
     /** @use HasFactory<TicketFactory> */
@@ -38,6 +39,7 @@ class Ticket extends Model
         return [
             'reminder_sent' => 'boolean',
             'checked_in_at' => 'datetime',
+            'cancelled_at' => 'datetime',
         ];
     }
 
@@ -81,6 +83,14 @@ class Ticket extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Determine if the ticket has been cancelled.
+     */
+    public function isCancelled(): bool
+    {
+        return $this->cancelled_at !== null || ($this->event && $this->event->trashed());
     }
 
     /**

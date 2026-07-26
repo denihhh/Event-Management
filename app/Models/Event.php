@@ -87,4 +87,12 @@ class Event extends Model
     {
         return $this->starts_at->isPast();
     }
+
+    /**
+     * Determine if the event has concluded (24 hours after start time).
+     */
+    public function hasEnded(): bool
+    {
+        return now()->greaterThan($this->starts_at->copy()->addHours(24));
+    }
 }

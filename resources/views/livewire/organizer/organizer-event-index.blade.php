@@ -44,24 +44,26 @@
                                 </a>
                             </flux:table.cell>
 
-                            <flux:table.cell class="text-xs text-zinc-500 whitespace-nowrap px-4 py-3.5 first:pl-6 last:pr-6">
+                            <flux:table.cell class="text-xs text-zinc-700 dark:text-zinc-300 font-medium whitespace-nowrap px-4 py-3.5 first:pl-6 last:pr-6">
                                 {{ $event->starts_at->format('M j, Y \a\t g:i A') }}
                             </flux:table.cell>
 
-                            <flux:table.cell class="text-xs text-zinc-500 max-w-xs truncate whitespace-nowrap px-4 py-3.5 first:pl-6 last:pr-6" title="{{ $event->location }}">
+                            <flux:table.cell class="text-xs text-zinc-700 dark:text-zinc-300 font-medium max-w-xs truncate whitespace-nowrap px-4 py-3.5 first:pl-6 last:pr-6" title="{{ $event->location }}">
                                 {{ $event->location }}
                             </flux:table.cell>
 
                             <flux:table.cell class="whitespace-nowrap px-4 py-3.5 first:pl-6 last:pr-6">
                                 <div class="flex items-center gap-1.5 text-xs font-mono">
-                                    <span class="font-semibold">{{ $event->tickets_sold }} / {{ $event->capacity }}</span>
-                                    <span class="text-zinc-400">({{ $event->remainingTickets() }} left)</span>
+                                    <span class="font-bold text-zinc-900 dark:text-white">{{ $event->tickets_sold }} / {{ $event->capacity }}</span>
+                                    <span class="text-zinc-600 dark:text-zinc-400 font-medium">({{ $event->remainingTickets() }} left)</span>
                                 </div>
                             </flux:table.cell>
 
                             <flux:table.cell class="whitespace-nowrap px-4 py-3.5 first:pl-6 last:pr-6">
-                                @if ($event->hasStarted())
-                                    <flux:badge size="sm" color="zinc" rounded>{{ __('Past') }}</flux:badge>
+                                @if ($event->hasEnded())
+                                    <flux:badge size="sm" color="zinc" rounded>{{ __('Concluded') }}</flux:badge>
+                                @elseif ($event->hasStarted())
+                                    <flux:badge size="sm" color="teal" rounded>{{ __('In Progress') }}</flux:badge>
                                 @elseif ($event->isSoldOut())
                                     <flux:badge size="sm" color="amber" rounded>{{ __('Sold Out') }}</flux:badge>
                                 @else
@@ -74,19 +76,27 @@
                                     <flux:button variant="subtle" icon="ellipsis-horizontal" size="sm" aria-label="{{ __('Actions') }}" />
 
                                     <flux:menu>
-                                        <flux:menu.item icon="qr-code" :href="route('organizer.events.check-in', $event)" wire:navigate>
-                                            {{ __('Door Check-In') }}
-                                        </flux:menu.item>
+                                        @if ($event->hasEnded())
+                                            <flux:menu.item icon="eye" :href="route('organizer.events.check-in', $event)" wire:navigate>
+                                                {{ __('View Details') }}
+                                            </flux:menu.item>
+                                        @else
+                                            <flux:menu.item icon="qr-code" :href="route('organizer.events.check-in', $event)" wire:navigate>
+                                                {{ __('Door Check-In') }}
+                                            </flux:menu.item>
+                                        @endif
                                         <flux:menu.item icon="users" :href="route('organizer.events.attendees', $event)" wire:navigate>
                                             {{ __('View Roster') }}
                                         </flux:menu.item>
-                                        <flux:menu.item icon="pencil-square" :href="route('organizer.events.edit', $event)" wire:navigate>
-                                            {{ __('Edit Event') }}
-                                        </flux:menu.item>
-                                        <flux:menu.separator />
-                                        <flux:menu.item icon="trash" variant="danger" wire:click="confirmDelete({{ $event->id }})">
-                                            {{ __('Cancel Event') }}
-                                        </flux:menu.item>
+                                        @if (! $event->hasEnded())
+                                            <flux:menu.item icon="pencil-square" :href="route('organizer.events.edit', $event)" wire:navigate>
+                                                {{ __('Edit Event') }}
+                                            </flux:menu.item>
+                                            <flux:menu.separator />
+                                            <flux:menu.item icon="trash" variant="danger" wire:click="confirmDelete({{ $event->id }})">
+                                                {{ __('Cancel Event') }}
+                                            </flux:menu.item>
+                                        @endif
                                     </flux:menu>
                                 </flux:dropdown>
                             </flux:table.cell>
@@ -102,17 +112,19 @@
     @endif
 
     <!-- Delete Confirmation Modal -->
-    <flux:modal :open="(bool) $deletingEventId" wire:close="$set('deletingEventId', null)">
+    <flux:modal name="cancel-event-modal" class="space-y-4 backdrop:backdrop-blur-sm backdrop:bg-black/50">
         <div class="space-y-4">
             <flux:heading size="lg">{{ __('Cancel Event?') }}</flux:heading>
-            <p class="text-sm text-zinc-500">
+            <p class="text-sm text-zinc-600 dark:text-zinc-400 font-medium">
                 {{ __('Are you sure you want to cancel this event? This will soft-delete the event and queue email notifications to all registered ticket holders.') }}
             </p>
             <div class="flex justify-end gap-3 pt-2">
-                <flux:button variant="subtle" wire:click="$set('deletingEventId', null)">
-                    {{ __('Keep Event') }}
-                </flux:button>
-                <flux:button variant="danger" wire:click="deleteEvent">
+                <flux:modal.close>
+                    <flux:button variant="subtle">
+                        {{ __('Keep Event') }}
+                    </flux:button>
+                </flux:modal.close>
+                <flux:button variant="danger" wire:click="deleteEvent" wire:loading.attr="disabled">
                     {{ __('Confirm Cancellation') }}
                 </flux:button>
             </div>

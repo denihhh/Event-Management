@@ -8,49 +8,49 @@
 
     <!-- Overview Stat Cards Grid -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <flux:card class="space-y-2">
+        <flux:card class="space-y-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm">
             <div class="flex items-center justify-between">
-                <span class="text-xs font-semibold uppercase tracking-wider text-zinc-500">{{ __('Database Engine') }}</span>
+                <span class="text-xs font-bold uppercase tracking-wider text-zinc-600 dark:text-zinc-400">{{ __('Database Engine') }}</span>
                 <flux:badge size="sm" color="purple">{{ config('database.default') }}</flux:badge>
             </div>
             <p class="text-2xl font-bold text-zinc-900 dark:text-zinc-100">{{ config('app.env') }}</p>
-            <p class="text-xs text-zinc-500">PHP v{{ PHP_VERSION }} • Laravel v{{ app()->version() }}</p>
+            <p class="text-xs text-zinc-600 dark:text-zinc-400 font-medium">PHP v{{ PHP_VERSION }} • Laravel v{{ app()->version() }}</p>
         </flux:card>
 
-        <flux:card class="space-y-2">
+        <flux:card class="space-y-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm">
             <div class="flex items-center justify-between">
-                <span class="text-xs font-semibold uppercase tracking-wider text-zinc-500">{{ __('Queue Driver') }}</span>
+                <span class="text-xs font-bold uppercase tracking-wider text-zinc-600 dark:text-zinc-400">{{ __('Queue Driver') }}</span>
                 <flux:badge size="sm" color="blue">{{ config('queue.default') }}</flux:badge>
             </div>
             <div class="flex items-baseline gap-2">
                 <span class="text-2xl font-bold text-zinc-900 dark:text-zinc-100">{{ $this->pendingJobsCount }}</span>
-                <span class="text-xs text-zinc-500">{{ __('pending jobs') }}</span>
+                <span class="text-xs text-zinc-600 dark:text-zinc-400 font-medium">{{ __('pending jobs') }}</span>
             </div>
-            <p class="text-xs text-zinc-500">{{ $this->failedJobsCount }} {{ __('failed jobs recorded') }}</p>
+            <p class="text-xs text-zinc-600 dark:text-zinc-400 font-medium">{{ $this->failedJobsCount }} {{ __('failed jobs recorded') }}</p>
         </flux:card>
 
-        <flux:card class="space-y-2">
+        <flux:card class="space-y-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm">
             <div class="flex items-center justify-between">
-                <span class="text-xs font-semibold uppercase tracking-wider text-zinc-500">{{ __('Mail System') }}</span>
+                <span class="text-xs font-bold uppercase tracking-wider text-zinc-600 dark:text-zinc-400">{{ __('Mail System') }}</span>
                 <flux:badge size="sm" color="emerald">{{ config('mail.default') }}</flux:badge>
             </div>
             <div class="flex items-baseline gap-2">
                 <span class="text-2xl font-bold text-zinc-900 dark:text-zinc-100">{{ $this->sentRemindersCount }}</span>
-                <span class="text-xs text-zinc-500">{{ __('reminders sent') }}</span>
+                <span class="text-xs text-zinc-600 dark:text-zinc-400 font-medium">{{ __('reminders sent') }}</span>
             </div>
-            <p class="text-xs text-zinc-500">{{ $this->pendingRemindersCount }} {{ __('reminders queued for next 24h') }}</p>
+            <p class="text-xs text-zinc-600 dark:text-zinc-400 font-medium">{{ $this->pendingRemindersCount }} {{ __('reminders queued for next 24h') }}</p>
         </flux:card>
 
-        <flux:card class="space-y-2">
+        <flux:card class="space-y-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm">
             <div class="flex items-center justify-between">
-                <span class="text-xs font-semibold uppercase tracking-wider text-zinc-500">{{ __('Platform Totals') }}</span>
+                <span class="text-xs font-bold uppercase tracking-wider text-zinc-600 dark:text-zinc-400">{{ __('Platform Totals') }}</span>
                 <flux:badge size="sm" color="zinc">{{ __('Live') }}</flux:badge>
             </div>
             <div class="flex items-baseline gap-2">
                 <span class="text-2xl font-bold text-zinc-900 dark:text-zinc-100">{{ $this->totalUsersCount }}</span>
-                <span class="text-xs text-zinc-500">{{ __('users') }}</span>
+                <span class="text-xs text-zinc-600 dark:text-zinc-400 font-medium">{{ __('users') }}</span>
             </div>
-            <p class="text-xs text-zinc-500">{{ $this->totalEventsCount }} {{ __('total events managed') }}</p>
+            <p class="text-xs text-zinc-600 dark:text-zinc-400 font-medium">{{ $this->totalEventsCount }} {{ __('total events managed') }}</p>
         </flux:card>
     </div>
 

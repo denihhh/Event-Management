@@ -153,3 +153,37 @@ test('organizer can filter global attendee roster by event', function (): void {
         ->assertSee($ticket1->ticket_code)
         ->assertDontSee($ticket2->ticket_code);
 });
+
+test('organizer cannot edit or cancel past concluded event', function () {
+    $organizer = User::factory()->organizer()->create();
+    $pastEvent = Event::factory()->create([
+        'user_id' => $organizer->id,
+        'starts_at' => now()->subHours(30),
+    ]);
+
+    $this->actingAs($organizer)
+        ->get(route('organizer.events.edit', $pastEvent))
+        ->assertForbidden();
+
+    Livewire::actingAs($organizer)
+        ->test(OrganizerEventIndex::class)
+        ->set('deletingEventId', $pastEvent->id)
+        ->call('deleteEvent')
+        ->assertForbidden();
+});
+
+test('organizer can view check in and roster for past concluded event', function () {
+    $organizer = User::factory()->organizer()->create();
+    $pastEvent = Event::factory()->create([
+        'user_id' => $organizer->id,
+        'starts_at' => now()->subHours(30),
+    ]);
+
+    $this->actingAs($organizer)
+        ->get(route('organizer.events.check-in', $pastEvent))
+        ->assertOk();
+
+    $this->actingAs($organizer)
+        ->get(route('organizer.events.attendees', $pastEvent))
+        ->assertOk();
+});

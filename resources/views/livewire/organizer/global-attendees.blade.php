@@ -55,27 +55,27 @@
                             <flux:table.cell class="px-4 py-3.5 first:pl-6 last:pr-6">
                                 <div class="min-w-0 py-0.5">
                                     <p class="font-medium truncate text-sm text-zinc-900 dark:text-zinc-100">{{ $ticket->user?->name ?? 'N/A' }}</p>
-                                    <p class="text-xs text-zinc-500 truncate">{{ $ticket->user?->email ?? 'N/A' }}</p>
+                                    <p class="text-xs text-zinc-600 dark:text-zinc-400 font-medium truncate">{{ $ticket->user?->email ?? 'N/A' }}</p>
                                 </div>
                             </flux:table.cell>
 
                             <flux:table.cell class="px-4 py-3.5 first:pl-6 last:pr-6">
                                 <div class="max-w-xs">
                                     @if ($ticket->event)
-                                        <a href="{{ route('events.show', $ticket->event) }}" wire:navigate class="hover:underline font-medium text-sm text-purple-600 dark:text-purple-400">
+                                        <a href="{{ route('events.show', $ticket->event) }}" wire:navigate class="hover:underline font-bold text-sm text-purple-700 dark:text-purple-400">
                                             {{ $ticket->event->title }}
                                         </a>
                                     @else
-                                        <span class="text-zinc-400 italic text-xs">{{ __('Cancelled Event') }}</span>
+                                        <span class="text-zinc-500 dark:text-zinc-400 italic text-xs">{{ __('Cancelled Event') }}</span>
                                     @endif
                                 </div>
                             </flux:table.cell>
 
-                            <flux:table.cell class="font-mono text-xs font-semibold text-purple-600 dark:text-purple-400 select-all whitespace-nowrap px-4 py-3.5 first:pl-6 last:pr-6">
+                            <flux:table.cell class="font-mono text-xs font-extrabold text-purple-700 dark:text-purple-400 select-all whitespace-nowrap px-4 py-3.5 first:pl-6 last:pr-6">
                                 {{ $ticket->ticket_code }}
                             </flux:table.cell>
 
-                            <flux:table.cell class="text-xs text-zinc-500 whitespace-nowrap px-4 py-3.5 first:pl-6 last:pr-6">
+                            <flux:table.cell class="text-xs text-zinc-700 dark:text-zinc-300 font-medium whitespace-nowrap px-4 py-3.5 first:pl-6 last:pr-6">
                                 {{ $ticket->created_at->format('M j, Y \a\t g:i A') }}
                             </flux:table.cell>
 

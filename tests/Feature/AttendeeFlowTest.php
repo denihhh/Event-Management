@@ -163,6 +163,45 @@ test('attendee can cancel active ticket', function () {
         ->set('cancellingTicketId', $ticket->id)
         ->call('cancelTicket');
 
-    expect(Ticket::find($ticket->id))->toBeNull()
+    expect($ticket->fresh()->isCancelled())->toBeTrue()
         ->and($event->fresh()->tickets_sold)->toBe(0);
+});
+
+test('attendee cannot cancel checked in ticket', function () {
+    $user = User::factory()->create();
+    $event = Event::factory()->create(['capacity' => 10, 'tickets_sold' => 1]);
+    $ticket = Ticket::factory()->create([
+        'event_id' => $event->id,
+        'user_id' => $user->id,
+        'checked_in_at' => now(),
+    ]);
+
+    Livewire::actingAs($user)
+        ->test(MyTickets::class)
+        ->set('cancellingTicketId', $ticket->id)
+        ->call('cancelTicket');
+
+    expect(Ticket::find($ticket->id))->not->toBeNull()
+        ->and($event->fresh()->tickets_sold)->toBe(1);
+});
+
+test('user can re-claim ticket after cancelling it', function () {
+    Mail::fake();
+
+    $user = User::factory()->create();
+    $event = Event::factory()->create(['capacity' => 10, 'tickets_sold' => 0]);
+    $ticket = Ticket::factory()->create([
+        'event_id' => $event->id,
+        'user_id' => $user->id,
+        'cancelled_at' => now(),
+    ]);
+
+    Livewire::actingAs($user)
+        ->test(RegisterTicket::class, ['event' => $event])
+        ->call('register');
+
+    $freshTicket = $ticket->fresh();
+    expect($freshTicket->isCancelled())->toBeFalse()
+        ->and($freshTicket->ticket_code)->not->toBe($ticket->ticket_code)
+        ->and($event->fresh()->tickets_sold)->toBe(1);
 });

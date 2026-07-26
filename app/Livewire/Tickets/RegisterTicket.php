@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
@@ -69,10 +70,29 @@ class RegisterTicket extends Component
                     ]);
                 }
 
-                if ($lockedEvent->tickets()->where('user_id', Auth::id())->exists()) {
-                    throw ValidationException::withMessages([
-                        'event' => __('You already have a ticket for this event.'),
+                /** @var Ticket|null $existingTicket */
+                $existingTicket = $lockedEvent->tickets()
+                    ->where('user_id', Auth::id())
+                    ->first();
+
+                if ($existingTicket) {
+                    if (! $existingTicket->isCancelled()) {
+                        throw ValidationException::withMessages([
+                            'event' => __('You already have an active ticket for this event.'),
+                        ]);
+                    }
+
+                    // Reactivate the cancelled ticket with a fresh UUID pass code
+                    $existingTicket->update([
+                        'cancelled_at' => null,
+                        'ticket_code' => (string) Str::uuid(),
+                        'reminder_sent' => false,
+                        'checked_in_at' => null,
                     ]);
+
+                    $lockedEvent->increment('tickets_sold');
+
+                    return $existingTicket;
                 }
 
                 /** @var Ticket $ticket */
@@ -103,7 +123,7 @@ class RegisterTicket extends Component
 
     public function render(): View
     {
-        $hasTicket = Auth::check() && $this->event->tickets()->where('user_id', Auth::id())->exists();
+        $hasTicket = Auth::check() && $this->event->tickets()->whereNull('cancelled_at')->where('user_id', Auth::id())->exists();
         $isOrganizer = Auth::check() && Auth::id() === $this->event->user_id;
 
         return view('livewire.tickets.register-ticket', [

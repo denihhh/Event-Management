@@ -47,7 +47,7 @@
                                 />
                                 <div class="min-w-0">
                                     <p class="font-medium truncate text-sm text-zinc-900 dark:text-zinc-100">{{ $user->name }}</p>
-                                    <p class="text-xs text-zinc-500 dark:text-zinc-400 truncate">{{ $user->email }}</p>
+                                    <p class="text-xs text-zinc-600 dark:text-zinc-400 font-medium truncate">{{ $user->email }}</p>
                                 </div>
                             </div>
                         </flux:table.cell>
@@ -59,7 +59,7 @@
                                 <div class="space-y-0.5">
                                     <flux:badge color="purple" size="sm" rounded>{{ __('Organizer') }}</flux:badge>
                                     @if ($user->organizer_expires_at)
-                                        <p class="text-[10px] text-zinc-400">Expires {{ $user->organizer_expires_at->format('M j, Y') }}</p>
+                                        <p class="text-[10px] text-zinc-600 dark:text-zinc-400 font-medium">Expires {{ $user->organizer_expires_at->format('M j, Y') }}</p>
                                     @endif
                                 </div>
                             @else

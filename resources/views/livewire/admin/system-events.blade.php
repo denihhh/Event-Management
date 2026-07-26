@@ -53,23 +53,23 @@
                                         <span>{{ $event->title }}</span>
                                         <flux:icon name="arrow-top-right-on-square" class="size-3.5 text-zinc-400 shrink-0" />
                                     </a>
-                                    <p class="text-xs text-zinc-500 truncate max-w-xs" title="{{ $event->location }}">{{ $event->location }}</p>
+                                    <p class="text-xs text-zinc-600 dark:text-zinc-400 font-medium truncate max-w-xs" title="{{ $event->location }}">{{ $event->location }}</p>
                                 </div>
                             </flux:table.cell>
 
                             <flux:table.cell class="px-4 py-3.5 first:pl-6 last:pr-6">
                                 <div class="min-w-0">
                                     <p class="text-sm font-medium truncate text-zinc-900 dark:text-zinc-100">{{ $event->organizer->name ?? 'N/A' }}</p>
-                                    <p class="text-xs text-zinc-500 truncate">{{ $event->organizer->email ?? 'N/A' }}</p>
+                                    <p class="text-xs text-zinc-600 dark:text-zinc-400 font-medium truncate">{{ $event->organizer->email ?? 'N/A' }}</p>
                                 </div>
                             </flux:table.cell>
 
-                            <flux:table.cell class="text-xs text-zinc-500 whitespace-nowrap px-4 py-3.5 first:pl-6 last:pr-6">
+                            <flux:table.cell class="text-xs text-zinc-700 dark:text-zinc-300 font-medium whitespace-nowrap px-4 py-3.5 first:pl-6 last:pr-6">
                                 {{ $event->starts_at->format('M j, Y \a\t g:i A') }}
                             </flux:table.cell>
 
                             <flux:table.cell class="whitespace-nowrap px-4 py-3.5 first:pl-6 last:pr-6">
-                                <span class="font-mono text-xs font-semibold">{{ $event->tickets_sold }} / {{ $event->capacity }}</span>
+                                <span class="font-mono text-xs font-bold text-zinc-900 dark:text-zinc-100">{{ $event->tickets_sold }} / {{ $event->capacity }}</span>
                             </flux:table.cell>
 
                             <flux:table.cell class="whitespace-nowrap px-4 py-3.5 first:pl-6 last:pr-6">

@@ -29,7 +29,7 @@ class EventAttendees extends Component
 
     public function mount(Event $event): void
     {
-        Gate::authorize('update', $event);
+        Gate::authorize('manageRoster', $event);
         $this->event = $event;
     }
 
@@ -43,6 +43,7 @@ class EventAttendees extends Component
         $tickets = $this->event
             ->tickets()
             ->with('user')
+            ->whereNull('cancelled_at')
             ->latest('created_at')
             ->get();
 
@@ -80,6 +81,7 @@ class EventAttendees extends Component
         $query = $this->event
             ->tickets()
             ->with('user')
+            ->whereNull('cancelled_at')
             ->latest('created_at');
 
         if (filled($this->search)) {

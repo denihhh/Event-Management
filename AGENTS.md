@@ -34,6 +34,8 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 - You must follow all existing code conventions used in this application. When creating or editing a file, check sibling files for the correct structure, approach, and naming.
 - Use descriptive names for variables and methods. For example, `isRegisteredForDiscounts`, not `discount()`.
 - Check for existing components to reuse before writing a new one.
+- **Light Mode Contrast Rule:** All status badges, green success indicators, and secondary text must use dark-tint variants (700/800 series) in light mode and light-tint variants (400 series) in dark mode to guarantee WCAG accessibility standards.
+- **Dual-Theme Accessibility Rule:** Never hardcode raw color classes (e.g., `text-green-400`, `text-white`, `bg-zinc-800`) without explicit Light Mode / Dark Mode pairs. Light Mode text must use 700/800 series color shades for high contrast; Dark Mode text must use 300/400 series shades.
 
 ## Verification Scripts
 

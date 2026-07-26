@@ -48,6 +48,7 @@ class ReviewApplications extends Component
         $app = OrganizerApplication::findOrFail($applicationId);
         $this->reviewingApplicationId = $app->id;
         $this->rejectionNotes = $app->admin_notes ?? '';
+        Flux::modal('review-application-modal')->show();
     }
 
     public function approveApplication(): void
@@ -63,6 +64,7 @@ class ReviewApplications extends Component
         if (! $application->isPending()) {
             Flux::toast(variant: 'warning', text: __('This application has already been processed.'));
             $this->reviewingApplicationId = null;
+            Flux::modal('review-application-modal')->close();
 
             return;
         }
@@ -82,6 +84,7 @@ class ReviewApplications extends Component
         }
 
         $this->reviewingApplicationId = null;
+        Flux::modal('review-application-modal')->close();
         Flux::toast(variant: 'success', text: __('Application approved! User granted permanent organizer role.'));
     }
 
@@ -98,6 +101,7 @@ class ReviewApplications extends Component
         if (! $application->isPending()) {
             Flux::toast(variant: 'warning', text: __('This application has already been processed.'));
             $this->reviewingApplicationId = null;
+            Flux::modal('review-application-modal')->close();
 
             return;
         }
@@ -112,6 +116,7 @@ class ReviewApplications extends Component
         }
 
         $this->reviewingApplicationId = null;
+        Flux::modal('review-application-modal')->close();
         Flux::toast(variant: 'info', text: __('Organizer application rejected.'));
     }
 

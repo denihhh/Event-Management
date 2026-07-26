@@ -66,14 +66,14 @@
                         </div>
                     </div>
 
-                    <div class="mt-6 pt-4 border-t border-zinc-100 dark:border-zinc-800 space-y-3">
-                        <div class="space-y-1 text-xs text-zinc-500 dark:text-zinc-400">
+                    <div class="mt-6 pt-4 border-t border-zinc-200 dark:border-zinc-800 space-y-3">
+                        <div class="space-y-1.5 text-xs text-zinc-700 dark:text-zinc-300 font-medium">
                             <div class="flex items-center gap-1.5">
-                                <flux:icon name="calendar" class="size-4 text-zinc-400" />
+                                <flux:icon name="calendar" class="size-4 text-purple-700 dark:text-purple-400 shrink-0" />
                                 <span>{{ $event->starts_at->format('M j, Y \a\t g:i A') }}</span>
                             </div>
                             <div class="flex items-center gap-1.5">
-                                <flux:icon name="map-pin" class="size-4 text-zinc-400" />
+                                <flux:icon name="map-pin" class="size-4 text-purple-700 dark:text-purple-400 shrink-0" />
                                 <span class="truncate">{{ $event->location }}</span>
                             </div>
                         </div>

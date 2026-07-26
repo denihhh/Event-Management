@@ -11,28 +11,28 @@
         <button
             type="button"
             wire:click="$set('filter', 'pending')"
-            class="pb-3 border-b-2 transition-colors cursor-pointer {{ $filter === 'pending' ? 'border-purple-600 text-purple-600 dark:border-purple-400 dark:text-purple-400 font-semibold' : 'border-transparent text-zinc-500 hover:text-zinc-700' }}"
+            class="pb-3 border-b-2 transition-colors cursor-pointer {{ $filter === 'pending' ? 'border-purple-600 text-purple-700 dark:border-purple-400 dark:text-purple-400 font-bold' : 'border-transparent text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white' }}"
         >
             {{ __('Pending Review') }}
         </button>
         <button
             type="button"
             wire:click="$set('filter', 'approved')"
-            class="pb-3 border-b-2 transition-colors cursor-pointer {{ $filter === 'approved' ? 'border-purple-600 text-purple-600 dark:border-purple-400 dark:text-purple-400 font-semibold' : 'border-transparent text-zinc-500 hover:text-zinc-700' }}"
+            class="pb-3 border-b-2 transition-colors cursor-pointer {{ $filter === 'approved' ? 'border-purple-600 text-purple-700 dark:border-purple-400 dark:text-purple-400 font-bold' : 'border-transparent text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white' }}"
         >
             {{ __('Approved') }}
         </button>
         <button
             type="button"
             wire:click="$set('filter', 'rejected')"
-            class="pb-3 border-b-2 transition-colors cursor-pointer {{ $filter === 'rejected' ? 'border-purple-600 text-purple-600 dark:border-purple-400 dark:text-purple-400 font-semibold' : 'border-transparent text-zinc-500 hover:text-zinc-700' }}"
+            class="pb-3 border-b-2 transition-colors cursor-pointer {{ $filter === 'rejected' ? 'border-purple-600 text-purple-700 dark:border-purple-400 dark:text-purple-400 font-bold' : 'border-transparent text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white' }}"
         >
             {{ __('Rejected') }}
         </button>
         <button
             type="button"
             wire:click="$set('filter', 'all')"
-            class="pb-3 border-b-2 transition-colors cursor-pointer {{ $filter === 'all' ? 'border-purple-600 text-purple-600 dark:border-purple-400 dark:text-purple-400 font-semibold' : 'border-transparent text-zinc-500 hover:text-zinc-700' }}"
+            class="pb-3 border-b-2 transition-colors cursor-pointer {{ $filter === 'all' ? 'border-purple-600 text-purple-700 dark:border-purple-400 dark:text-purple-400 font-bold' : 'border-transparent text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white' }}"
         >
             {{ __('All Applications') }}
         </button>
@@ -42,7 +42,7 @@
         <div class="text-center py-16 bg-white dark:bg-zinc-800/50 rounded-xl border border-zinc-200 dark:border-zinc-700/60 p-8 space-y-3">
             <flux:icon name="clipboard-document-check" class="mx-auto size-12 text-zinc-400" />
             <flux:heading size="lg">{{ __('No applications found') }}</flux:heading>
-            <p class="text-sm text-zinc-500">{{ __('No organizer requests match the selected status filter.') }}</p>
+            <p class="text-sm text-zinc-600 dark:text-zinc-400 font-medium">{{ __('No organizer requests match the selected status filter.') }}</p>
         </div>
     @else
         <div class="overflow-x-auto rounded-xl border border-zinc-200 dark:border-zinc-700/60 bg-white dark:bg-zinc-800/50 shadow-xs">
@@ -112,7 +112,7 @@
     @endif
 
     {{-- Review Modal --}}
-    <flux:modal :open="(bool) $reviewingApplicationId" wire:close="$set('reviewingApplicationId', null)">
+    <flux:modal name="review-application-modal" class="space-y-6 backdrop:backdrop-blur-sm backdrop:bg-black/50">
         <div class="space-y-6">
             <div>
                 <flux:heading size="lg">{{ __('Review Partner Application') }}</flux:heading>
@@ -164,9 +164,11 @@
                 </div>
 
                 <div class="flex justify-end gap-3 pt-2 border-t border-zinc-100 dark:border-zinc-800">
-                    <flux:button variant="subtle" wire:click="$set('reviewingApplicationId', null)">
-                        {{ __('Cancel') }}
-                    </flux:button>
+                    <flux:modal.close>
+                        <flux:button variant="subtle">
+                            {{ __('Cancel') }}
+                        </flux:button>
+                    </flux:modal.close>
                     <flux:button variant="danger" wire:click="rejectApplication" wire:loading.attr="disabled">
                         {{ __('Reject Request') }}
                     </flux:button>
@@ -192,9 +194,11 @@
                 @endif
 
                 <div class="flex justify-end pt-2 border-t border-zinc-100 dark:border-zinc-800">
-                    <flux:button variant="subtle" wire:click="$set('reviewingApplicationId', null)">
-                        {{ __('Close') }}
-                    </flux:button>
+                    <flux:modal.close>
+                        <flux:button variant="subtle">
+                            {{ __('Close') }}
+                        </flux:button>
+                    </flux:modal.close>
                 </div>
             @endif
         </div>

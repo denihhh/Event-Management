@@ -8,8 +8,8 @@
             <flux:subheading>{{ __('Registered attendees for :title (:count total)', ['title' => $event->title, 'count' => $tickets->total()]) }}</flux:subheading>
         </div>
         <div class="flex items-center gap-3">
-            <flux:button variant="filled" icon="qr-code" :href="route('organizer.events.check-in', $event)" wire:navigate>
-                {{ __('Door Check-In') }}
+            <flux:button variant="filled" :icon="$event->hasEnded() ? 'eye' : 'qr-code'" :href="route('organizer.events.check-in', $event)" wire:navigate>
+                {{ $event->hasEnded() ? __('View Details') : __('Door Check-In') }}
             </flux:button>
             <flux:button variant="primary" icon="arrow-down-tray" wire:click="exportCsv">
                 {{ __('Export CSV') }}
@@ -51,15 +51,15 @@
                                 {{ $ticket->user?->name ?? 'N/A' }}
                             </flux:table.cell>
 
-                            <flux:table.cell class="text-xs text-zinc-500 px-4 py-3.5 first:pl-6 last:pr-6">
+                            <flux:table.cell class="text-xs text-zinc-700 dark:text-zinc-300 font-medium px-4 py-3.5 first:pl-6 last:pr-6">
                                 {{ $ticket->user?->email ?? 'N/A' }}
                             </flux:table.cell>
 
-                            <flux:table.cell class="font-mono text-xs font-semibold text-purple-600 dark:text-purple-400 select-all whitespace-nowrap px-4 py-3.5 first:pl-6 last:pr-6">
+                            <flux:table.cell class="font-mono text-xs font-extrabold text-purple-700 dark:text-purple-400 select-all whitespace-nowrap px-4 py-3.5 first:pl-6 last:pr-6">
                                 {{ $ticket->ticket_code }}
                             </flux:table.cell>
 
-                            <flux:table.cell class="text-xs text-zinc-500 whitespace-nowrap px-4 py-3.5 first:pl-6 last:pr-6">
+                            <flux:table.cell class="text-xs text-zinc-700 dark:text-zinc-300 font-medium whitespace-nowrap px-4 py-3.5 first:pl-6 last:pr-6">
                                 {{ $ticket->created_at->format('M j, Y \a\t g:i A') }}
                             </flux:table.cell>
 

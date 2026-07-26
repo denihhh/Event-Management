@@ -112,8 +112,21 @@
             const gridColor = isDark ? '#27272a' : '#e4e4e7';
             const themeMode = isDark ? 'dark' : 'light';
 
-            if (this.salesChartInstance) this.salesChartInstance.destroy();
-            if (this.attendeesChartInstance) this.attendeesChartInstance.destroy();
+            if (this.salesChartInstance) {
+                try { this.salesChartInstance.destroy(); } catch (e) {}
+                this.salesChartInstance = null;
+            }
+            if (this.attendeesChartInstance) {
+                try { this.attendeesChartInstance.destroy(); } catch (e) {}
+                this.attendeesChartInstance = null;
+            }
+
+            if (this.$refs.salesChart) {
+                this.$refs.salesChart.innerHTML = '';
+            }
+            if (this.$refs.attendeesChart) {
+                this.$refs.attendeesChart.innerHTML = '';
+            }
 
             // Line / Area Chart for Ticket Sales
             this.salesChartInstance = new ApexCharts(this.$refs.salesChart, {

@@ -60,6 +60,7 @@ class GlobalAttendees extends Component
 
         $query = Ticket::query()
             ->with(['user', 'event'])
+            ->whereNull('cancelled_at')
             ->latest('created_at');
 
         if (! $user->isAdmin()) {
@@ -111,6 +112,7 @@ class GlobalAttendees extends Component
 
         $query = Ticket::query()
             ->with(['user', 'event'])
+            ->whereNull('cancelled_at')
             ->latest('created_at');
 
         if (! $user->isAdmin()) {

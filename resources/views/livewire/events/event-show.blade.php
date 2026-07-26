@@ -42,27 +42,27 @@
 
                 <div class="space-y-4 text-sm">
                     <div class="flex items-start gap-3">
-                        <flux:icon name="calendar" class="size-5 text-purple-600 dark:text-purple-400 mt-0.5" />
+                        <flux:icon name="calendar" class="size-5 text-purple-700 dark:text-purple-400 mt-0.5" />
                         <div>
                             <p class="font-medium text-zinc-900 dark:text-zinc-100">Date & Time</p>
-                            <p class="text-zinc-500 text-xs">{{ $event->starts_at->format('l, F j, Y') }}</p>
-                            <p class="text-zinc-500 text-xs">{{ $event->starts_at->format('g:i A') }}</p>
+                            <p class="text-zinc-600 dark:text-zinc-400 text-xs font-medium">{{ $event->starts_at->format('l, F j, Y') }}</p>
+                            <p class="text-zinc-600 dark:text-zinc-400 text-xs font-medium">{{ $event->starts_at->format('g:i A') }}</p>
                         </div>
                     </div>
 
                     <div class="flex items-start gap-3">
-                        <flux:icon name="map-pin" class="size-5 text-purple-600 dark:text-purple-400 mt-0.5" />
+                        <flux:icon name="map-pin" class="size-5 text-purple-700 dark:text-purple-400 mt-0.5" />
                         <div>
                             <p class="font-medium text-zinc-900 dark:text-zinc-100">Location</p>
-                            <p class="text-zinc-500 text-xs">{{ $event->location }}</p>
+                            <p class="text-zinc-600 dark:text-zinc-400 text-xs font-medium">{{ $event->location }}</p>
                         </div>
                     </div>
 
                     <div class="flex items-start gap-3">
-                        <flux:icon name="ticket" class="size-5 text-purple-600 dark:text-purple-400 mt-0.5" />
+                        <flux:icon name="ticket" class="size-5 text-purple-700 dark:text-purple-400 mt-0.5" />
                         <div>
                             <p class="font-medium text-zinc-900 dark:text-zinc-100">Availability</p>
-                            <p class="text-zinc-500 text-xs">{{ $event->tickets_sold }} / {{ $event->capacity }} tickets claimed</p>
+                            <p class="text-zinc-600 dark:text-zinc-400 text-xs font-medium">{{ $event->tickets_sold }} / {{ $event->capacity }} tickets claimed</p>
                         </div>
                     </div>
                 </div>

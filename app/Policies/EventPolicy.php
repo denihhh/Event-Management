@@ -37,13 +37,21 @@ class EventPolicy
      */
     public function update(User $user, Event $event): bool
     {
-        return $user->isOrganizer() && $user->id === $event->user_id;
+        return $user->isOrganizer() && $user->id === $event->user_id && ! $event->hasEnded();
     }
 
     /**
      * Determine whether the user can delete the event.
      */
     public function delete(User $user, Event $event): bool
+    {
+        return $user->isOrganizer() && $user->id === $event->user_id && ! $event->hasEnded();
+    }
+
+    /**
+     * Determine whether the user can view door check-in & attendee roster for the event.
+     */
+    public function manageRoster(User $user, Event $event): bool
     {
         return $user->isOrganizer() && $user->id === $event->user_id;
     }
