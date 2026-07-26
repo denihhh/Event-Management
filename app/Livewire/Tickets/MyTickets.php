@@ -8,6 +8,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Title;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -96,7 +97,7 @@ class MyTickets extends Component
                 ->whereHas('event', fn ($eq) => $eq->whereNull('deleted_at')->where('starts_at', '<=', now())),
             'cancelled' => $query->where(function ($q): void {
                 $q->whereNotNull('cancelled_at')
-                    ->orWhereHas('event', fn ($eq) => $eq->onlyTrashed());
+                    ->orWhereHas('event', fn ($eq) => $eq->whereNotNull('deleted_at'));
             }),
             default => null,
         };
