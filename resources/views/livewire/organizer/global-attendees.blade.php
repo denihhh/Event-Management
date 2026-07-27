@@ -12,32 +12,21 @@
     </div>
 
     <!-- Toolbar (Search & Event Filter) -->
-    <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div class="w-full sm:w-80">
-            <flux:input
-                wire:model.live.debounce.300ms="search"
-                icon="magnifying-glass"
-                placeholder="{{ __('Search by name, email, event, or ticket code...') }}"
-                clearable
-            />
-        </div>
-
-        <div class="flex items-center gap-2 w-full sm:w-auto">
-            <flux:select wire:model.live="eventId" class="w-64">
-                <option value="all">{{ __('All Events') }}</option>
-                @foreach ($this->events as $event)
-                    <option value="{{ $event->id }}">{{ $event->title }}</option>
-                @endforeach
-            </flux:select>
-        </div>
-    </div>
+    <x-ui.search-toolbar :placeholder="__('Search by name, email, event, or ticket code...')">
+        <flux:select wire:model.live="eventId" class="w-64">
+            <option value="all">{{ __('All Events') }}</option>
+            @foreach ($this->events as $event)
+                <option value="{{ $event->id }}">{{ $event->title }}</option>
+            @endforeach
+        </flux:select>
+    </x-ui.search-toolbar>
 
     @if ($tickets->isEmpty())
-        <div class="text-center py-16 bg-white dark:bg-zinc-800/50 rounded-xl border border-zinc-200 dark:border-zinc-700/60 p-8 space-y-3">
-            <flux:icon name="users" class="mx-auto size-12 text-zinc-400" />
-            <flux:heading size="lg">{{ __('No attendees found') }}</flux:heading>
-            <p class="text-sm text-zinc-500">{{ $search ? __('No attendees match your search query.') : __('When attendees register for your events, they will appear here.') }}</p>
-        </div>
+        <x-ui.empty-state
+            icon="users"
+            :title="__('No attendees found')"
+            :description="$search ? __('No attendees match your search query.') : __('When attendees register for your events, they will appear here.')"
+        />
     @else
         <div class="overflow-x-auto rounded-xl border border-zinc-200 dark:border-zinc-700/60 bg-white dark:bg-zinc-800/50 shadow-xs">
             <flux:table>

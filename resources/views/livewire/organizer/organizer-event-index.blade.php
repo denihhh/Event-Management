@@ -11,17 +11,38 @@
         </div>
     </div>
 
+    <!-- Search & Filter Toolbar -->
+    <x-ui.search-toolbar :placeholder="__('Search events by title, location, or description...')">
+        <flux:select wire:model.live="statusFilter" class="w-64">
+            <flux:select.option value="all">{{ __('All Statuses') }}</flux:select.option>
+            <flux:select.option value="upcoming">{{ __('Upcoming') }}</flux:select.option>
+            <flux:select.option value="active">{{ __('Active') }}</flux:select.option>
+            <flux:select.option value="in_progress">{{ __('In Progress') }}</flux:select.option>
+            <flux:select.option value="sold_out">{{ __('Sold Out') }}</flux:select.option>
+            <flux:select.option value="concluded">{{ __('Concluded') }}</flux:select.option>
+        </flux:select>
+    </x-ui.search-toolbar>
+
     @if ($events->isEmpty())
-        <div class="text-center py-16 bg-white dark:bg-zinc-800/50 rounded-xl border border-zinc-200 dark:border-zinc-700/60 p-8 space-y-4">
-            <flux:icon name="calendar" class="mx-auto size-12 text-zinc-400" />
-            <flux:heading size="lg">{{ __('No events created yet') }}</flux:heading>
-            <p class="text-sm text-zinc-500 max-w-md mx-auto">
-                {{ __('Get started by creating your first event to publish dates, location, and ticket capacity.') }}
-            </p>
-            <flux:button variant="primary" :href="route('organizer.events.create')" wire:navigate>
-                {{ __('Create Event') }}
-            </flux:button>
-        </div>
+        @if (filled($search) || $statusFilter !== 'all')
+            <x-ui.empty-state
+                icon="calendar"
+                :title="__('No matching events found')"
+                :description="__('No events match your current search criteria or status filter. Try clearing your search query or changing the filter.')"
+            />
+        @else
+            <x-ui.empty-state
+                icon="calendar"
+                :title="__('No events created yet')"
+                :description="__('Get started by creating your first event to publish dates, location, and ticket capacity.')"
+            >
+                <x-slot:actions>
+                    <flux:button variant="primary" :href="route('organizer.events.create')" wire:navigate>
+                        {{ __('Create Event') }}
+                    </flux:button>
+                </x-slot:actions>
+            </x-ui.empty-state>
+        @endif
     @else
         <div class="overflow-x-auto rounded-xl border border-zinc-200 dark:border-zinc-700/60 bg-white dark:bg-zinc-800/50 shadow-xs">
             <flux:table>
@@ -60,15 +81,7 @@
                             </flux:table.cell>
 
                             <flux:table.cell class="whitespace-nowrap px-4 py-3.5 first:pl-6 last:pr-6">
-                                @if ($event->hasEnded())
-                                    <flux:badge size="sm" color="zinc" rounded>{{ __('Concluded') }}</flux:badge>
-                                @elseif ($event->hasStarted())
-                                    <flux:badge size="sm" color="teal" rounded>{{ __('In Progress') }}</flux:badge>
-                                @elseif ($event->isSoldOut())
-                                    <flux:badge size="sm" color="amber" rounded>{{ __('Sold Out') }}</flux:badge>
-                                @else
-                                    <flux:badge size="sm" color="emerald" rounded>{{ __('Active') }}</flux:badge>
-                                @endif
+                                <x-ui.status-badge :event="$event" />
                             </flux:table.cell>
 
                             <flux:table.cell align="end" class="px-4 py-3.5 first:pl-6 last:pr-6">

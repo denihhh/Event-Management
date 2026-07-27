@@ -35,6 +35,52 @@ test('organizer can view organizer event index', function () {
         ->assertDontSee('Other Organizer Fest');
 });
 
+test('organizer can search events on manage events index', function () {
+    $organizer = User::factory()->organizer()->create();
+    $event1 = Event::factory()->create([
+        'user_id' => $organizer->id,
+        'title' => 'Laravel Conference 2026',
+        'location' => 'San Francisco',
+    ]);
+    $event2 = Event::factory()->create([
+        'user_id' => $organizer->id,
+        'title' => 'React Gathering 2026',
+        'location' => 'New York',
+    ]);
+
+    Livewire::actingAs($organizer)
+        ->test(OrganizerEventIndex::class)
+        ->set('search', 'Laravel')
+        ->assertSee('Laravel Conference 2026')
+        ->assertDontSee('React Gathering 2026')
+        ->set('search', 'New York')
+        ->assertSee('React Gathering 2026')
+        ->assertDontSee('Laravel Conference 2026');
+});
+
+test('organizer can filter events by status on manage events index', function () {
+    $organizer = User::factory()->organizer()->create();
+    $upcomingEvent = Event::factory()->create([
+        'user_id' => $organizer->id,
+        'title' => 'Upcoming Gala',
+        'starts_at' => now()->addDays(5),
+    ]);
+    $concludedEvent = Event::factory()->create([
+        'user_id' => $organizer->id,
+        'title' => 'Past Expo',
+        'starts_at' => now()->subDays(5),
+    ]);
+
+    Livewire::actingAs($organizer)
+        ->test(OrganizerEventIndex::class)
+        ->set('statusFilter', 'upcoming')
+        ->assertSee('Upcoming Gala')
+        ->assertDontSee('Past Expo')
+        ->set('statusFilter', 'concluded')
+        ->assertSee('Past Expo')
+        ->assertDontSee('Upcoming Gala');
+});
+
 test('organizer can create a new event', function () {
     $organizer = User::factory()->organizer()->create();
 

@@ -106,4 +106,4 @@ A web application designed for event organizers to publish public events with fi
 4. **Impersonation Loop Safety:** Admins can impersonate non-admins (`canImpersonate() = true`), but admins can NEVER be impersonated (`canBeImpersonated() = false`).
 5. **Type Safety & Larastan Compliance:** 100% PHPStan type safety (0 errors) enforced across models, controllers, Livewire components, mailable backoff methods (`@return array<int, int>`), and factories using explicit relation generics (`@return HasMany<..., $this>`, `@return BelongsTo<..., $this>`, `@return HasOne<..., $this>`).
 6. **Testing Standards:** All feature and unit tests are written using Pest PHP (`test()` / `it()` syntax).
-7. **Component Structure:** Use standard Class-based Livewire components (`app/Livewire/*` + `resources/views/livewire/*`) and Flux UI components.
+7. **Component Structure:** Use standard Class-based Livewire components (`app/Livewire/*` + `resources/views/livewire/*`), Flux UI components, and modular Blade components grouped under `resources/views/components/` (`cards/`, `ui/`, `nav/`).

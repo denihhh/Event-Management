@@ -46,6 +46,12 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 - Stick to existing directory structure; don't create new base folders without approval.
 - Do not change the application's dependencies without approval.
 
+### Blade Component Architecture (`resources/views/components/`)
+Modular Blade components are organized in nested subdirectories:
+- `components/cards/`: Reusable card components (`event-card.blade.php`, `ticket-card.blade.php`).
+- `components/ui/`: Shared UI controls (`search-toolbar.blade.php`, `status-badge.blade.php`, `empty-state.blade.php`).
+- `components/nav/`: Brand and navigation structure (`brand.blade.php`, `header.blade.php`, `footer.blade.php`).
+
 ## Frontend Bundling
 
 - If the user doesn't see a frontend change reflected in the UI, it could mean they need to run `npm run build`, `npm run dev`, or `composer run dev`. Ask them.

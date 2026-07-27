@@ -18,7 +18,23 @@ class OrganizerEventIndex extends Component
 {
     use WithPagination;
 
+    #[Url(history: true)]
+    public string $search = '';
+
+    #[Url(history: true)]
+    public string $statusFilter = 'all';
+
     public ?int $deletingEventId = null;
+
+    public function updatedSearch(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedStatusFilter(): void
+    {
+        $this->resetPage();
+    }
 
     public function confirmDelete(int $eventId): void
     {
@@ -72,10 +88,29 @@ class OrganizerEventIndex extends Component
 
     public function render(): View
     {
-        $events = Auth::user()
+        $query = Auth::user()
             ->organizedEvents()
-            ->latest('starts_at')
-            ->paginate(10);
+            ->latest('starts_at');
+
+        if (filled($this->search)) {
+            $search = '%'.$this->search.'%';
+            $query->where(function ($q) use ($search): void {
+                $q->where('title', 'like', $search)
+                    ->orWhere('location', 'like', $search)
+                    ->orWhere('description', 'like', $search);
+            });
+        }
+
+        match ($this->statusFilter) {
+            'active' => $query->where('starts_at', '>', now())->whereColumn('tickets_sold', '<', 'capacity'),
+            'in_progress' => $query->where('starts_at', '<=', now())->where('starts_at', '>', now()->subHours(24)),
+            'sold_out' => $query->whereColumn('tickets_sold', '>=', 'capacity')->where('starts_at', '>', now()->subHours(24)),
+            'concluded' => $query->where('starts_at', '<=', now()->subHours(24)),
+            'upcoming' => $query->where('starts_at', '>=', now()),
+            default => null,
+        };
+
+        $events = $query->paginate(10);
 
         return view('livewire.organizer.organizer-event-index', [
             'events' => $events,

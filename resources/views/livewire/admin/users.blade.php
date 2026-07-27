@@ -7,24 +7,14 @@
     </div>
 
     <!-- Search & Role Filter Toolbar -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="md:col-span-2">
-            <flux:input
-                wire:model.live.debounce.300ms="search"
-                icon="magnifying-glass"
-                placeholder="{{ __('Search by name or email...') }}"
-                clearable
-            />
-        </div>
-        <div>
-            <flux:select wire:model.live="role" placeholder="{{ __('Filter by role') }}">
-                <flux:select.option value="all">{{ __('All Roles') }}</flux:select.option>
-                <flux:select.option value="admin">{{ __('Admin Only') }}</flux:select.option>
-                <flux:select.option value="organizer">{{ __('Organizer Only') }}</flux:select.option>
-                <flux:select.option value="attendee">{{ __('Attendee Only') }}</flux:select.option>
-            </flux:select>
-        </div>
-    </div>
+    <x-ui.search-toolbar searchModel="search" :placeholder="__('Search by name or email...')">
+        <flux:select wire:model.live="role" placeholder="{{ __('Filter by role') }}" class="w-full sm:w-64">
+            <flux:select.option value="all">{{ __('All Roles') }}</flux:select.option>
+            <flux:select.option value="admin">{{ __('Admin Only') }}</flux:select.option>
+            <flux:select.option value="organizer">{{ __('Organizer Only') }}</flux:select.option>
+            <flux:select.option value="attendee">{{ __('Attendee Only') }}</flux:select.option>
+        </flux:select>
+    </x-ui.search-toolbar>
 
     <!-- User Roster Table -->
     <div class="overflow-x-auto rounded-xl border border-zinc-200 dark:border-zinc-700/60 bg-white dark:bg-zinc-800/50 shadow-xs">

@@ -28,13 +28,11 @@
     </div>
 
     @if ($applications->isEmpty())
-        <div
-            class="text-center py-16 bg-white dark:bg-zinc-800/50 rounded-xl border border-zinc-200 dark:border-zinc-700/60 p-8 space-y-3">
-            <flux:icon name="clipboard-document-check" class="mx-auto size-12 text-zinc-400" />
-            <flux:heading size="lg">{{ __('No applications found') }}</flux:heading>
-            <p class="text-sm text-zinc-600 dark:text-zinc-400 font-medium">
-                {{ __('No organizer requests match the selected status filter.') }}</p>
-        </div>
+        <x-ui.empty-state
+            icon="clipboard-document-check"
+            :title="__('No applications found')"
+            :description="__('No organizer requests match the selected status filter.')"
+        />
     @else
         <div
             class="overflow-x-auto rounded-xl border border-zinc-200 dark:border-zinc-700/60 bg-white dark:bg-zinc-800/50 shadow-xs">

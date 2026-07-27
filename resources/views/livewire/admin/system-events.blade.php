@@ -7,31 +7,21 @@
     </div>
 
     <!-- Search & Filter Toolbar -->
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div class="sm:col-span-2">
-            <flux:input
-                wire:model.live.debounce.300ms="search"
-                icon="magnifying-glass"
-                placeholder="{{ __('Search by title, location, or organizer...') }}"
-                clearable
-            />
-        </div>
-        <div>
-            <flux:select wire:model.live="statusFilter">
-                <flux:select.option value="all">{{ __('All Events') }}</flux:select.option>
-                <flux:select.option value="active">{{ __('Active / Upcoming') }}</flux:select.option>
-                <flux:select.option value="past">{{ __('Past Events') }}</flux:select.option>
-                <flux:select.option value="trashed">{{ __('Cancelled / Soft-deleted') }}</flux:select.option>
-            </flux:select>
-        </div>
-    </div>
+    <x-ui.search-toolbar searchModel="search" :placeholder="__('Search by title, location, or organizer...')">
+        <flux:select wire:model.live="statusFilter" class="w-full sm:w-64">
+            <flux:select.option value="all">{{ __('All Events') }}</flux:select.option>
+            <flux:select.option value="active">{{ __('Active / Upcoming') }}</flux:select.option>
+            <flux:select.option value="past">{{ __('Past Events') }}</flux:select.option>
+            <flux:select.option value="trashed">{{ __('Cancelled / Soft-deleted') }}</flux:select.option>
+        </flux:select>
+    </x-ui.search-toolbar>
 
     @if ($events->isEmpty())
-        <div class="text-center py-16 bg-white dark:bg-zinc-800/50 rounded-xl border border-zinc-200 dark:border-zinc-700/60 p-8 space-y-3">
-            <flux:icon name="shield-check" class="mx-auto size-12 text-zinc-400" />
-            <flux:heading size="lg">{{ __('No events found') }}</flux:heading>
-            <p class="text-sm text-zinc-500">{{ __('No events match your current filter settings.') }}</p>
-        </div>
+        <x-ui.empty-state
+            icon="shield-check"
+            :title="__('No events found')"
+            :description="__('No events match your current filter settings.')"
+        />
     @else
         <div class="overflow-x-auto rounded-xl border border-zinc-200 dark:border-zinc-700/60 bg-white dark:bg-zinc-800/50 shadow-xs">
             <flux:table>
@@ -73,15 +63,7 @@
                             </flux:table.cell>
 
                             <flux:table.cell class="whitespace-nowrap px-4 py-3.5 first:pl-6 last:pr-6">
-                                @if ($event->trashed())
-                                    <flux:badge color="red" size="sm" rounded>{{ __('Cancelled') }}</flux:badge>
-                                @elseif ($event->hasStarted())
-                                    <flux:badge color="zinc" size="sm" rounded>{{ __('Past') }}</flux:badge>
-                                @elseif ($event->isSoldOut())
-                                    <flux:badge color="amber" size="sm" rounded>{{ __('Sold Out') }}</flux:badge>
-                                @else
-                                    <flux:badge color="emerald" size="sm" rounded>{{ __('Active') }}</flux:badge>
-                                @endif
+                                <x-ui.status-badge :event="$event" />
                             </flux:table.cell>
 
                             <flux:table.cell align="end" class="px-4 py-3.5 first:pl-6 last:pr-6">
