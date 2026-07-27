@@ -144,7 +144,7 @@
                             <!-- 1. CANCELLED STATE -->
                             <div class="p-3.5 bg-red-50/80 dark:bg-red-950/40 rounded-xl border border-red-200/90 dark:border-red-900/60 flex items-center justify-between gap-4">
                                 <div class="space-y-1 min-w-0">
-                                    <span class="text-xs uppercase tracking-wider text-red-800 dark:text-red-300 font-bold">Pass Status</span>
+                                    <span class="text-xs uppercase tracking-wider text-red-800 dark:text-red-300 font-bold">Void Digital Ticket</span>
                                     <div class="font-mono text-xs text-zinc-500 dark:text-zinc-400 line-through select-all break-all">
                                         {{ $ticket->ticket_code }}
                                     </div>
@@ -163,7 +163,7 @@
                             <!-- 2. CHECKED-IN STATE -->
                             <div class="p-3.5 bg-teal-50/80 dark:bg-teal-950/40 rounded-xl border border-teal-200/90 dark:border-teal-900/60 flex items-center justify-between gap-4">
                                 <div class="space-y-1 min-w-0">
-                                    <span class="text-xs uppercase tracking-wider text-teal-800 dark:text-teal-300 font-bold">Door Pass Code</span>
+                                    <span class="text-xs uppercase tracking-wider text-teal-800 dark:text-teal-300 font-bold">Digital Ticket</span>
                                     <div class="font-mono text-xs font-extrabold text-teal-900 dark:text-teal-100 select-all break-all">
                                         {{ $ticket->ticket_code }}
                                     </div>
@@ -201,7 +201,7 @@
                             <!-- 4. ACTIVE TICKET STATE -->
                             <div class="p-3.5 bg-purple-50/70 dark:bg-purple-950/30 rounded-xl border border-purple-200/90 dark:border-purple-900/60 flex items-center justify-between gap-4">
                                 <div class="space-y-1 min-w-0">
-                                    <span class="text-xs uppercase tracking-wider text-purple-800 dark:text-purple-300 font-bold">Digital Ticket Pass Code</span>
+                                    <span class="text-xs uppercase tracking-wider text-purple-800 dark:text-purple-300 font-bold">Digital Ticket</span>
                                     <div class="font-mono text-xs font-extrabold text-purple-900 dark:text-purple-100 select-all break-all">
                                         {{ $ticket->ticket_code }}
                                     </div>

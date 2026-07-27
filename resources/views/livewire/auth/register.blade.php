@@ -54,17 +54,6 @@
                 viewable
             />
 
-            <!-- Organizer Registration -->
-            <flux:field>
-                <flux:checkbox
-                    name="is_organizer"
-                    value="1"
-                    :label="__('I want to organize events')"
-                    :checked="old('is_organizer')"
-                />
-                <flux:description>{{ __('Check this if you want to create and manage events.') }}</flux:description>
-            </flux:field>
-
             <div class="flex items-center justify-end">
                 <flux:button type="submit" variant="primary" class="w-full" data-test="register-user-button">
                     {{ __('Create account') }}

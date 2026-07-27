@@ -30,18 +30,17 @@ test('user can be created as organizer via factory state', function () {
     expect($organizer->is_organizer)->toBeTrue();
 });
 
-test('user registration accepts is_organizer parameter', function () {
+test('user registration creates standard attendee account', function () {
     $response = $this->post(route('register.store'), [
-        'name' => 'Test Organizer',
-        'email' => 'organizer@example.com',
+        'name' => 'Test User',
+        'email' => 'newuser@example.com',
         'password' => 'password123',
         'password_confirmation' => 'password123',
-        'is_organizer' => '1',
     ]);
 
     $response->assertRedirect(route('dashboard'));
 
-    $user = User::where('email', 'organizer@example.com')->first();
+    $user = User::where('email', 'newuser@example.com')->first();
     expect($user)->not->toBeNull()
-        ->and($user->is_organizer)->toBeTrue();
+        ->and($user->is_organizer)->toBeFalse();
 });
