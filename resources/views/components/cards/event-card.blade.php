@@ -4,6 +4,17 @@
 
 <flux:card {{ $attributes->merge(['class' => 'flex flex-col justify-between hover:shadow-md transition-shadow min-w-0 overflow-hidden']) }}>
     <div class="space-y-4 min-w-0">
+        <!-- 16:9 Banner Image Header -->
+        <a href="{{ route('events.show', $event) }}" wire:navigate class="block overflow-hidden rounded-lg aspect-[16/9] bg-zinc-900 border border-zinc-200 dark:border-zinc-800 relative group">
+            @if ($event->banner_path)
+                <img src="{{ $event->bannerUrl() }}" alt="{{ $event->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+            @else
+                <div class="w-full h-full bg-gradient-to-br from-purple-600 via-indigo-700 to-zinc-900 flex items-center justify-center text-white/80 group-hover:scale-105 transition-transform duration-300">
+                    <flux:icon name="calendar" class="size-10 text-purple-200/60" />
+                </div>
+            @endif
+        </a>
+
         <div class="flex flex-wrap items-center justify-between gap-2 min-w-0">
             <flux:badge size="sm" color="purple" icon="user" class="max-w-[70%] shrink-0">
                 <span class="truncate inline-block max-w-[130px] sm:max-w-[170px]">{{ $event->organizer->name ?? __('Unknown') }}</span>
@@ -25,7 +36,7 @@
                 </a>
             </flux:heading>
             <p class="text-sm text-zinc-600 dark:text-zinc-400 line-clamp-2">
-                {{ $event->description }}
+                {{ strip_tags($event->description) }}
             </p>
         </div>
     </div>

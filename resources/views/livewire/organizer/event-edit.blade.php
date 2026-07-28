@@ -8,18 +8,33 @@
     </div>
 
     <form wire:submit="update" class="space-y-6 bg-white dark:bg-zinc-800 p-6 rounded-xl border border-zinc-200 dark:border-zinc-700 shadow-xs">
+        <!-- Event Banner / Thumbnail (16:9 Widescreen) -->
+        <x-forms.banner-upload :banner="$banner" :existingBannerPath="$existingBannerPath" />
+
         <flux:input
             wire:model="title"
             label="Event Title"
             required
         />
 
-        <flux:textarea
-            wire:model="description"
-            label="Description"
-            rows="5"
-            required
-        />
+        <!-- Description with Inline Image Support -->
+        <div class="space-y-2">
+            <div class="flex items-center justify-between">
+                <label class="block text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                    {{ __('Description') }}
+                </label>
+                <span class="text-xs text-zinc-500">{{ __('Supports HTML & inline event photos') }}</span>
+            </div>
+
+            <flux:textarea
+                wire:model="description"
+                rows="6"
+                required
+            />
+
+            <!-- Inline Description Image Picker Component -->
+            <x-forms.inline-image-picker :inlineImage="$inlineImage" :uploadedInlineImages="$uploadedInlineImages" />
+        </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <flux:input

@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * @property int $id
@@ -18,13 +19,14 @@ use Illuminate\Support\Carbon;
  * @property string $description
  * @property Carbon $starts_at
  * @property string $location
+ * @property string|null $banner_path
  * @property int $capacity
  * @property int $tickets_sold
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
  */
-#[Fillable(['title', 'description', 'starts_at', 'location', 'capacity'])]
+#[Fillable(['title', 'description', 'starts_at', 'location', 'banner_path', 'capacity'])]
 class Event extends Model
 {
     /** @use HasFactory<EventFactory> */
@@ -86,6 +88,14 @@ class Event extends Model
     public function hasStarted(): bool
     {
         return $this->starts_at->isPast();
+    }
+
+    /**
+     * Get the public URL for the event banner thumbnail.
+     */
+    public function bannerUrl(): ?string
+    {
+        return $this->banner_path ? Storage::url($this->banner_path) : null;
     }
 
     /**

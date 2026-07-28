@@ -59,10 +59,19 @@
                     @foreach ($events as $event)
                         <flux:table.row wire:key="event-{{ $event->id }}">
                             <flux:table.cell class="font-medium px-4 py-3.5 first:pl-6 last:pr-6">
-                                <a href="{{ route('events.show', $event) }}" target="_blank" class="hover:underline flex items-center gap-1.5 text-sm">
-                                    <span>{{ $event->title }}</span>
-                                    <flux:icon name="arrow-top-right-on-square" class="size-3.5 text-zinc-400 shrink-0" />
-                                </a>
+                                <div class="flex items-center gap-3">
+                                    @if ($event->banner_path)
+                                        <img src="{{ $event->bannerUrl() }}" alt="Thumbnail" class="size-9 aspect-[16/9] object-cover rounded-lg shrink-0 border border-zinc-200 dark:border-zinc-700 shadow-2xs" />
+                                    @else
+                                        <div class="size-9 aspect-[16/9] bg-purple-100 dark:bg-purple-950/60 border border-purple-200 dark:border-purple-800 rounded-lg flex items-center justify-center text-purple-600 dark:text-purple-400 shrink-0">
+                                            <flux:icon name="photo" class="size-4" />
+                                        </div>
+                                    @endif
+                                    <a href="{{ route('events.show', $event) }}" target="_blank" class="hover:underline flex items-center gap-1.5 text-sm">
+                                        <span>{{ $event->title }}</span>
+                                        <flux:icon name="arrow-top-right-on-square" class="size-3.5 text-zinc-400 shrink-0" />
+                                    </a>
+                                </div>
                             </flux:table.cell>
 
                             <flux:table.cell class="text-xs text-zinc-700 dark:text-zinc-300 font-medium whitespace-nowrap px-4 py-3.5 first:pl-6 last:pr-6">

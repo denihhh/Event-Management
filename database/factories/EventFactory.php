@@ -24,9 +24,20 @@ class EventFactory extends Factory
             'description' => fake()->paragraphs(2, true),
             'starts_at' => fake()->dateTimeBetween('+1 day', '+3 months'),
             'location' => fake()->address(),
+            'banner_path' => null,
             'capacity' => fake()->numberBetween(10, 500),
             'tickets_sold' => 0,
         ];
+    }
+
+    /**
+     * Indicate that the event has a banner image.
+     */
+    public function withBanner(?string $path = null): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'banner_path' => $path ?? 'events/banners/sample-banner.jpg',
+        ]);
     }
 
     /**
