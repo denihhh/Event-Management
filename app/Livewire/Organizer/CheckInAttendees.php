@@ -103,6 +103,22 @@ class CheckInAttendees extends Component
     }
 
     /**
+     * Fast check-in helper for camera QR code scanner.
+     *
+     * @return array{status: string, message: string}
+     */
+    public function scanCheckInWithCode(string $code): array
+    {
+        $this->ticketInput = $code;
+        $this->scanCheckIn();
+
+        return [
+            'status' => 'completed',
+            'message' => __('Scan processed.'),
+        ];
+    }
+
+    /**
      * Check in a specific ticket by ID.
      */
     public function checkIn(int $ticketId): void

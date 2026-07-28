@@ -72,29 +72,39 @@
 
     <!-- Fast Ticket Code Scanner Box (Only active during event) -->
     @if (! $event->hasEnded())
-        <flux:card class="space-y-3 bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-950/20 dark:to-indigo-950/20 border-purple-200 dark:border-purple-800/40">
-            <div class="flex items-center gap-2">
-                <flux:icon name="qr-code" class="size-5 text-purple-600 dark:text-purple-400" />
-                <flux:heading size="md">Fast Ticket Code Check-In</flux:heading>
-            </div>
-            <p class="text-xs text-zinc-600 dark:text-zinc-400">
-                Scan a ticket QR code with your barcode scanner or enter the ticket code UUID to check in the attendee instantly.
-            </p>
-
-            <form wire:submit.prevent="scanCheckIn" class="flex gap-2">
-                <div class="flex-1">
-                    <flux:input
-                        wire:model="ticketInput"
-                        placeholder="Scan QR code or paste ticket UUID code here..."
-                        icon="qr-code"
-                        clearable
-                        autofocus
-                    />
+        <flux:card class="space-y-4 bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-950/20 dark:to-indigo-950/20 border-purple-200 dark:border-purple-800/40">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div class="space-y-1">
+                    <div class="flex items-center gap-2">
+                        <flux:icon name="qr-code" class="size-5 text-purple-600 dark:text-purple-400" />
+                        <flux:heading size="md">{{ __('Fast Ticket Code Check-In') }}</flux:heading>
+                    </div>
+                    <p class="text-xs text-zinc-600 dark:text-zinc-400">
+                        {{ __('Use live camera scanning, USB barcode scanner, or manual ticket code entry to check in attendees.') }}
+                    </p>
                 </div>
-                <flux:button variant="primary" type="submit" icon="check">
-                    Check In
-                </flux:button>
-            </form>
+            </div>
+
+            <div wire:ignore>
+                <x-ui.qr-scanner />
+            </div>
+
+            <div class="pt-2 border-t border-purple-200/60 dark:border-purple-800/40">
+                <form wire:submit.prevent="scanCheckIn" class="flex gap-2">
+                    <div class="flex-1">
+                        <flux:input
+                            wire:model="ticketInput"
+                            placeholder="{{ __('Scan QR code or paste ticket UUID code here...') }}"
+                            icon="qr-code"
+                            clearable
+                            autofocus
+                        />
+                    </div>
+                    <flux:button variant="primary" type="submit" icon="check" class="bg-purple-600 hover:bg-purple-500 text-white">
+                        {{ __('Check In') }}
+                    </flux:button>
+                </form>
+            </div>
         </flux:card>
     @endif
 

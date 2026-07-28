@@ -83,6 +83,18 @@ test('organizer can fast check-in by scanning ticket code', function (): void {
     expect($ticket->fresh()->isCheckedIn())->toBeTrue();
 });
 
+test('organizer can check in attendee using scanCheckInWithCode method for camera scanner', function (): void {
+    $organizer = User::factory()->create(['is_organizer' => true]);
+    $event = Event::factory()->create(['user_id' => $organizer->id]);
+    $ticket = Ticket::factory()->create(['event_id' => $event->id]);
+
+    Livewire::actingAs($organizer)
+        ->test(CheckInAttendees::class, ['event' => $event])
+        ->call('scanCheckInWithCode', $ticket->ticket_code);
+
+    expect($ticket->fresh()->isCheckedIn())->toBeTrue();
+});
+
 test('scanning invalid ticket code does not crash and leaves ticket untouched', function (): void {
     $organizer = User::factory()->create(['is_organizer' => true]);
     $event = Event::factory()->create(['user_id' => $organizer->id]);
