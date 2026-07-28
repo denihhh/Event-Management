@@ -27,17 +27,4 @@ class TicketPdfController extends Controller
 
         return $pdf->download("Ticket-Pass-{$ticket->ticket_code}.pdf");
     }
-
-    public function upload(Request $reuest, File $file): Response
-    {
-        $this->authorize('upload', $file);
-
-        $file->load(['event.organizer','user']);
-
-        $pdf = Pdf::loadView('pdf.ticket-pass', [
-            'file' => $file,
-        ]);
-
-        return $pdf->download("Ticket-Pass-".$file->file_name.".pdf");
-    }
 }
