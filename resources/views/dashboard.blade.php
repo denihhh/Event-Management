@@ -51,7 +51,8 @@
                 <flux:heading size="lg">{{ __('Browse Events') }}</flux:heading>
                 <p class="text-xs text-zinc-500">{{ __('Explore upcoming summits, workshops, and concerts.') }}</p>
                 <div class="pt-2">
-                    <flux:button size="sm" variant="primary" :href="route('events.index')" wire:navigate class="w-full bg-purple-600 hover:bg-purple-500 text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-900 font-medium">
+                    <flux:button size="sm" variant="primary" :href="route('events.index')" wire:navigate
+                        class="w-full bg-purple-600 hover:bg-purple-500 text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-900 font-medium">
                         {{ __('View All Events') }}
                     </flux:button>
                 </div>
@@ -67,7 +68,8 @@
                 <p class="text-xs text-zinc-500">{{ __('View and present your claimed digital ticket pass codes.') }}
                 </p>
                 <div class="pt-2">
-                    <flux:button size="sm" variant="primary" :href="route('tickets.index')" wire:navigate class="w-full bg-purple-600 hover:bg-purple-500 text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-900 font-medium">
+                    <flux:button size="sm" variant="primary" :href="route('tickets.index')" wire:navigate
+                        class="w-full bg-purple-600 hover:bg-purple-500 text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-900 font-medium">
                         {{ __('My Pass Codes') }}
                     </flux:button>
                 </div>
@@ -100,7 +102,8 @@
                     <flux:heading size="lg">{{ __('Account Settings') }}</flux:heading>
                     <p class="text-xs text-zinc-500">{{ __('Manage profile information, password, and security.') }}</p>
                     <div class="pt-2">
-                        <flux:button size="sm" variant="primary" :href="route('profile.edit')" wire:navigate class="w-full bg-purple-600 hover:bg-purple-500 text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-900 font-medium">
+                        <flux:button size="sm" variant="primary" :href="route('profile.edit')" wire:navigate
+                            class="w-full bg-purple-600 hover:bg-purple-500 text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-900 font-medium">
                             {{ __('Settings') }}
                         </flux:button>
                     </div>

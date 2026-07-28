@@ -8,7 +8,7 @@
     $hasStarted = $ticket->event?->hasStarted();
 @endphp
 
-<flux:card wire:key="ticket-{{ $ticket->id }}" {{ $attributes->merge(['class' => 'printable-ticket-card space-y-4 flex flex-col justify-between transition-all min-w-0 overflow-hidden bg-white dark:bg-zinc-900 shadow-sm border ' . ($isCancelled ? 'border-red-500/30 dark:border-red-900/40 bg-zinc-50/50 dark:bg-zinc-900/50' : ($isCheckedIn ? 'border-teal-500/40 dark:border-teal-900/50' : ($hasStarted ? 'border-zinc-200 dark:border-zinc-800 opacity-90' : 'border-purple-500/30 dark:border-purple-900/40')))]) }}>
+<flux:card wire:key="ticket-{{ $ticket->id }}" {{ $attributes->merge(['class' => 'space-y-4 flex flex-col justify-between transition-all min-w-0 overflow-hidden bg-white dark:bg-zinc-900 shadow-sm border ' . ($isCancelled ? 'border-red-500/30 dark:border-red-900/40 bg-zinc-50/50 dark:bg-zinc-900/50' : ($isCheckedIn ? 'border-teal-500/40 dark:border-teal-900/50' : ($hasStarted ? 'border-zinc-200 dark:border-zinc-800 opacity-90' : 'border-purple-500/30 dark:border-purple-900/40')))]) }}>
     <div class="space-y-3 min-w-0">
         <div class="flex items-center justify-between gap-2 min-w-0">
             <flux:badge color="purple" size="sm" icon="user" class="shrink-0 max-w-[60%] font-semibold">
@@ -44,13 +44,9 @@
                                     {{ __('View Details') }}
                                 </flux:menu.item>
                             @endif
-                            @if (! $isCancelled && ! $isCheckedIn && ! $hasStarted)
-                                <flux:menu.item icon="printer" x-on:click="
-                                    document.querySelectorAll('.printable-ticket-card').forEach(el => el.classList.remove('print-ticket-target'));
-                                    $el.closest('.printable-ticket-card').classList.add('print-ticket-target');
-                                    window.print();
-                                ">
-                                    {{ __('Print Pass') }}
+                            @if (! $isCancelled && ! $isCheckedIn && ! $hasStarted && ! $ticket->event?->trashed())
+                                <flux:menu.item icon="arrow-down-tray" :href="route('tickets.pdf', $ticket)" target="_blank">
+                                    {{ __('Download PDF') }}
                                 </flux:menu.item>
                                 <flux:menu.separator />
                                 <flux:menu.item icon="x-circle" variant="danger" wire:click="confirmCancel({{ $ticket->id }})">
@@ -162,12 +158,15 @@
             {{ __('Claimed :time', ['time' => $ticket->created_at->diffForHumans()]) }}
         </span>
         @if (! $isCancelled && ! $isCheckedIn && ! $hasStarted && ! $ticket->event?->trashed())
-            <flux:button variant="subtle" size="sm" icon="printer" class="h-7 text-xs" x-on:click="
-                document.querySelectorAll('.printable-ticket-card').forEach(el => el.classList.remove('print-ticket-target'));
-                $el.closest('.printable-ticket-card').classList.add('print-ticket-target');
-                window.print();
-            ">
-                {{ __('Print') }}
+            <flux:button
+                variant="primary"
+                size="sm"
+                icon="arrow-down-tray"
+                class="h-7 text-xs bg-purple-600 hover:bg-purple-500 text-white dark:bg-purple-500 dark:hover:bg-purple-400 dark:text-white font-medium"
+                :href="route('tickets.pdf', $ticket)"
+                target="_blank"
+            >
+                {{ __('Download PDF') }}
             </flux:button>
         @endif
     </div>

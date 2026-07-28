@@ -34,8 +34,6 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 - You must follow all existing code conventions used in this application. When creating or editing a file, check sibling files for the correct structure, approach, and naming.
 - Use descriptive names for variables and methods. For example, `isRegisteredForDiscounts`, not `discount()`.
 - Check for existing components to reuse before writing a new one.
-- **Light Mode Contrast Rule:** All status badges, green success indicators, and secondary text must use dark-tint variants (700/800 series) in light mode and light-tint variants (400 series) in dark mode to guarantee WCAG accessibility standards.
-- **Dual-Theme Accessibility Rule:** Never hardcode raw color classes (e.g., `text-green-400`, `text-white`, `bg-zinc-800`) without explicit Light Mode / Dark Mode pairs. Light Mode text must use 700/800 series color shades for high contrast; Dark Mode text must use 300/400 series shades.
 
 ## Verification Scripts
 
@@ -45,12 +43,6 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 
 - Stick to existing directory structure; don't create new base folders without approval.
 - Do not change the application's dependencies without approval.
-
-### Blade Component Architecture (`resources/views/components/`)
-Modular Blade components are organized in nested subdirectories:
-- `components/cards/`: Reusable card components (`event-card.blade.php`, `ticket-card.blade.php`).
-- `components/ui/`: Shared UI controls (`search-toolbar.blade.php`, `status-badge.blade.php`, `empty-state.blade.php`).
-- `components/nav/`: Brand and navigation structure (`brand.blade.php`, `header.blade.php`, `footer.blade.php`).
 
 ## Frontend Bundling
 

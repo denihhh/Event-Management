@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\TicketPdfController;
 use App\Http\Middleware\EnsureUserIsOrganizer;
 use App\Livewire\Admin\ReviewApplications;
 use App\Livewire\Admin\SystemEvents;
@@ -25,6 +26,7 @@ Route::get('/events/{event}', EventShow::class)->name('events.show');
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('dashboard', 'dashboard')->name('dashboard');
     Route::get('/my-tickets', MyTickets::class)->name('tickets.index');
+    Route::get('/tickets/{ticket}/pdf', [TicketPdfController::class, 'download'])->name('tickets.pdf');
     Route::get('/event-operation/become-organizer', BecomeOrganizer::class)->name('become-organizer.edit');
 });
 

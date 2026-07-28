@@ -45,4 +45,14 @@ class TicketFactory extends Factory
             'checked_in_at' => now(),
         ]);
     }
+
+    /**
+     * Indicate that the ticket has been cancelled.
+     */
+    public function cancelled(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'cancelled_at' => now(),
+        ]);
+    }
 }
