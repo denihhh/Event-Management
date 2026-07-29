@@ -29,9 +29,23 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 items-start">
         <!-- Banner Image Container (16:9 Widescreen) -->
         <div class="lg:col-span-2">
-            <div class="relative w-full aspect-[16/9] rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800 shadow-sm bg-zinc-900">
+            <div class="relative w-full aspect-[16/9] rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800 shadow-sm bg-zinc-900 group">
                 @if ($event->banner_path)
-                    <img src="{{ $event->bannerUrl() }}" alt="{{ $event->title }}" class="w-full h-full object-cover" />
+                    <img
+                        src="{{ $event->bannerUrl() }}"
+                        alt="{{ $event->title }}"
+                        class="w-full h-full object-cover cursor-zoom-in group-hover:scale-102 transition-transform duration-300"
+                        x-data
+                        x-on:click="$dispatch('preview-image', { src: '{{ $event->bannerUrl() }}', alt: '{{ e($event->title) }}' })"
+                    />
+                    <div
+                        x-data
+                        x-on:click="$dispatch('preview-image', { src: '{{ $event->bannerUrl() }}', alt: '{{ e($event->title) }}' })"
+                        class="absolute bottom-3 right-3 bg-black/65 hover:bg-black/80 text-white text-xs px-2.5 py-1 rounded-lg font-semibold backdrop-blur-xs cursor-pointer opacity-0 group-hover:opacity-100 transition flex items-center gap-1.5 shadow-sm"
+                    >
+                        <flux:icon name="magnifying-glass-plus" class="size-3.5" />
+                        <span>{{ __('Preview Banner') }}</span>
+                    </div>
                 @else
                     <div class="w-full h-full bg-gradient-to-br from-purple-600 via-indigo-700 to-zinc-900 flex flex-col items-center justify-center text-white/80 p-6 text-center">
                         <flux:icon name="calendar" class="size-16 text-purple-200/50 mb-2" />
@@ -58,8 +72,15 @@
             {{ __('About This Event') }}
         </flux:heading>
 
-        <div class="prose dark:prose-invert max-w-none text-zinc-700 dark:text-zinc-300 leading-relaxed [&_img]:rounded-xl [&_img]:max-h-96 [&_img]:object-cover [&_img]:my-4 [&_img]:shadow-md">
+        <div
+            x-data
+            x-on:click="if ($event.target.tagName === 'IMG') $dispatch('preview-image', { src: $event.target.src, alt: $event.target.alt || '{{ e($event->title) }}' })"
+            class="prose dark:prose-invert max-w-none text-zinc-700 dark:text-zinc-300 leading-relaxed [&_img]:rounded-xl [&_img]:max-h-96 [&_img]:object-cover [&_img]:my-4 [&_img]:shadow-md [&_img]:cursor-zoom-in [&_img]:hover:opacity-90 [&_img]:transition"
+        >
             {!! $event->description !!}
         </div>
     </div>
+
+    <!-- Image Lightbox Modal -->
+    <x-ui.image-lightbox />
 </div>

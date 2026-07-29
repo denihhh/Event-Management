@@ -5,15 +5,28 @@
 <flux:card {{ $attributes->merge(['class' => 'flex flex-col justify-between hover:shadow-md transition-shadow min-w-0 overflow-hidden']) }}>
     <div class="space-y-4 min-w-0">
         <!-- 16:9 Banner Image Header -->
-        <a href="{{ route('events.show', $event) }}" wire:navigate class="block overflow-hidden rounded-lg aspect-[16/9] bg-zinc-900 border border-zinc-200 dark:border-zinc-800 relative group">
+        <div class="relative overflow-hidden rounded-lg aspect-[16/9] bg-zinc-900 border border-zinc-200 dark:border-zinc-800 group">
             @if ($event->banner_path)
-                <img src="{{ $event->bannerUrl() }}" alt="{{ $event->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                <a href="{{ route('events.show', $event) }}" wire:navigate class="block w-full h-full">
+                    <img src="{{ $event->bannerUrl() }}" alt="{{ $event->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                </a>
+                <button
+                    type="button"
+                    x-data
+                    x-on:click.stop="$dispatch('preview-image', { src: '{{ $event->bannerUrl() }}', alt: '{{ e($event->title) }}' })"
+                    class="absolute top-2.5 right-2.5 bg-black/60 hover:bg-black text-white p-1.5 rounded-lg backdrop-blur-xs transition opacity-0 group-hover:opacity-100 shadow-sm"
+                    title="{{ __('Preview full image') }}"
+                >
+                    <flux:icon name="magnifying-glass-plus" class="size-4" />
+                </button>
             @else
-                <div class="w-full h-full bg-gradient-to-br from-purple-600 via-indigo-700 to-zinc-900 flex items-center justify-center text-white/80 group-hover:scale-105 transition-transform duration-300">
-                    <flux:icon name="calendar" class="size-10 text-purple-200/60" />
-                </div>
+                <a href="{{ route('events.show', $event) }}" wire:navigate class="block w-full h-full">
+                    <div class="w-full h-full bg-gradient-to-br from-purple-600 via-indigo-700 to-zinc-900 flex items-center justify-center text-white/80 group-hover:scale-105 transition-transform duration-300">
+                        <flux:icon name="calendar" class="size-10 text-purple-200/60" />
+                    </div>
+                </a>
             @endif
-        </a>
+        </div>
 
         <div class="flex flex-wrap items-center justify-between gap-2 min-w-0">
             <flux:badge size="sm" color="purple" icon="user" class="max-w-[70%] shrink-0">

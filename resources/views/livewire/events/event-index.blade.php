@@ -37,4 +37,7 @@
             {{ $events->links() }}
         </div>
     @endif
+
+    <!-- Image Lightbox Modal -->
+    <x-ui.image-lightbox />
 </div>

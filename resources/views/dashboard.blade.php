@@ -1,24 +1,24 @@
 <x-layouts::app :title="__('Dashboard')">
     <div class="space-y-6">
         {{-- Welcome Header --}}
-        <div
-            class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-zinc-800/80 p-6 rounded-xl border border-zinc-200 dark:border-zinc-700/60 shadow-xs">
-            <div>
-                <flux:heading size="xl" level="1">{{ __('Welcome back, :name!', ['name' => auth()->user()->name]) }}
-                </flux:heading>
-                <flux:subheading>
-                    {{ __('Manage your event tickets, discover upcoming gatherings, or host your own events.') }}
-                </flux:subheading>
-            </div>
+        @if (auth()->user()?->isOrganizer() || auth()->user()?->isAdmin())
+            <div
+                class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-zinc-800/80 p-6 rounded-xl border border-zinc-200 dark:border-zinc-700/60 shadow-xs">
+                <div>
+                    <flux:heading size="xl" level="1">{{ __('Welcome back, :name!', ['name' => auth()->user()->name]) }}
+                    </flux:heading>
+                    <flux:subheading>
+                        {{ __('Manage your event tickets, discover upcoming gatherings, or host your own events.') }}
+                    </flux:subheading>
+                </div>
 
-            @if (auth()->user()?->isOrganizer() || auth()->user()?->isAdmin())
                 <div>
                     <flux:button variant="outline" icon="plus" :href="route('organizer.events.create')" wire:navigate>
                         {{ __('Create New Event') }}
                     </flux:button>
                 </div>
-            @endif
-        </div>
+            </div>
+        @endif
 
         {{-- Attendee Onboarding Callout Banner --}}
         @if (!auth()->user()?->isOrganizer() && !auth()->user()?->isAdmin())
@@ -42,74 +42,55 @@
 
         {{-- Dashboard Stat Cards Grid --}}
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <flux:card class="space-y-3">
-                <div class="flex items-center justify-between">
-                    <span
-                        class="text-xs font-semibold uppercase tracking-wider text-zinc-500">{{ __('Event Discovery') }}</span>
-                    <flux:icon name="calendar" class="size-5 text-purple-600 dark:text-purple-400" />
-                </div>
-                <flux:heading size="lg">{{ __('Browse Events') }}</flux:heading>
-                <p class="text-xs text-zinc-500">{{ __('Explore upcoming summits, workshops, and concerts.') }}</p>
-                <div class="pt-2">
-                    <flux:button size="sm" variant="primary" :href="route('events.index')" wire:navigate
-                        class="w-full bg-purple-600 hover:bg-purple-500 text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-900 font-medium">
-                        {{ __('View All Events') }}
-                    </flux:button>
-                </div>
-            </flux:card>
+            <x-cards.dashboard-stat-card
+                :label="__('Event Discovery')"
+                :title="__('Browse Events')"
+                :description="__('Explore upcoming summits, workshops, and concerts.')"
+                icon="calendar"
+                iconColor="text-purple-600 dark:text-purple-400"
+                :buttonText="__('View All Events')"
+                :href="route('events.index')"
+            />
 
-            <flux:card class="space-y-3">
-                <div class="flex items-center justify-between">
-                    <span
-                        class="text-xs font-semibold uppercase tracking-wider text-zinc-500">{{ __('Digital Passes') }}</span>
-                    <flux:icon name="ticket" class="size-5 text-emerald-600 dark:text-emerald-400" />
-                </div>
-                <flux:heading size="lg">{{ __('My Tickets') }}</flux:heading>
-                <p class="text-xs text-zinc-500">{{ __('View and present your claimed digital ticket pass codes.') }}
-                </p>
-                <div class="pt-2">
-                    <flux:button size="sm" variant="primary" :href="route('tickets.index')" wire:navigate
-                        class="w-full bg-purple-600 hover:bg-purple-500 text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-900 font-medium">
-                        {{ __('My Pass Codes') }}
-                    </flux:button>
-                </div>
-            </flux:card>
+            <x-cards.dashboard-stat-card
+                :label="__('Digital Passes')"
+                :title="__('My Tickets')"
+                :description="__('View and present your claimed digital ticket pass codes.')"
+                icon="ticket"
+                iconColor="text-emerald-600 dark:text-emerald-400"
+                :buttonText="__('My Pass Codes')"
+                :href="route('tickets.index')"
+            />
 
             @if (auth()->user()?->isOrganizer() || auth()->user()?->isAdmin())
-                <flux:card class="space-y-3">
-                    <div class="flex items-center justify-between">
-                        <span
-                            class="text-xs font-semibold uppercase tracking-wider text-zinc-500">{{ __('Hosting') }}</span>
-                        <flux:icon name="building-office-2" class="size-5 text-indigo-600 dark:text-indigo-400" />
-                    </div>
-                    <flux:heading size="lg">{{ __('Managed Events') }}</flux:heading>
-                    <p class="text-xs text-zinc-500">{{ __('Track event sales, edit details, and view attendee rosters.') }}
-                    </p>
-                    <div class="pt-2">
-                        <flux:button size="sm" variant="primary" :href="route('organizer.events.index')" wire:navigate
-                            class="w-full bg-purple-600 hover:bg-purple-500 text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-900 font-medium">
-                            {{ __('Manage Hosted Events') }}
-                        </flux:button>
-                    </div>
-                </flux:card>
+                <x-cards.dashboard-stat-card
+                    :label="__('Hosting')"
+                    :title="__('Managed Events')"
+                    :description="__('Track event sales, edit details, and view attendee rosters.')"
+                    icon="building-office-2"
+                    iconColor="text-indigo-600 dark:text-indigo-400"
+                    :buttonText="__('Manage Hosted Events')"
+                    :href="route('organizer.events.index')"
+                />
             @else
-                <flux:card class="space-y-3">
-                    <div class="flex items-center justify-between">
-                        <span
-                            class="text-xs font-semibold uppercase tracking-wider text-zinc-500">{{ __('Account') }}</span>
-                        <flux:icon name="cog-6-tooth" class="size-5 text-zinc-500" />
-                    </div>
-                    <flux:heading size="lg">{{ __('Account Settings') }}</flux:heading>
-                    <p class="text-xs text-zinc-500">{{ __('Manage profile information, password, and security.') }}</p>
-                    <div class="pt-2">
-                        <flux:button size="sm" variant="primary" :href="route('profile.edit')" wire:navigate
-                            class="w-full bg-purple-600 hover:bg-purple-500 text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-900 font-medium">
-                            {{ __('Settings') }}
-                        </flux:button>
-                    </div>
-                </flux:card>
+                <x-cards.dashboard-stat-card
+                    :label="__('Account')"
+                    :title="__('Account Settings')"
+                    :description="__('Manage profile information, password, and security.')"
+                    icon="cog-6-tooth"
+                    iconColor="text-zinc-500"
+                    :buttonText="__('Settings')"
+                    :href="route('profile.edit')"
+                />
             @endif
         </div>
+
+        {{-- Featured Events Carousel (Attendees) --}}
+        @if (!auth()->user()?->isOrganizer() && !auth()->user()?->isAdmin())
+            <div class="pt-2">
+                <livewire:events.featured-events-carousel />
+            </div>
+        @endif
 
         {{-- Organizer Analytics & Performance Dashboard --}}
         @if (auth()->user()?->isOrganizer() || auth()->user()?->isAdmin())
