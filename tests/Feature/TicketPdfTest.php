@@ -1,5 +1,6 @@
 <?php
 
+use App\Mail\EventTicketMail;
 use App\Models\Event;
 use App\Models\Ticket;
 use App\Models\User;
@@ -72,4 +73,16 @@ test('user cannot download pdf for checked-in ticket', function (): void {
     $this->actingAs($user)
         ->get(route('tickets.pdf', $ticket))
         ->assertForbidden();
+});
+
+test('event ticket mail includes the pdf pass attachment', function (): void {
+    $user = User::factory()->create();
+    $ticket = Ticket::factory()->create(['user_id' => $user->id]);
+
+    $mailable = new EventTicketMail($ticket);
+    $attachments = $mailable->attachments();
+
+    expect($attachments)->toHaveCount(1)
+        ->and($attachments[0]->as)->toBe("Ticket-Pass-{$ticket->ticket_code}.pdf")
+        ->and($attachments[0]->mime)->toBe('application/pdf');
 });

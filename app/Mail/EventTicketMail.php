@@ -3,9 +3,11 @@
 namespace App\Mail;
 
 use App\Models\Ticket;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
@@ -34,7 +36,7 @@ class EventTicketMail extends Mailable implements ShouldQueue
      */
     public function __construct(public Ticket $ticket)
     {
-        $this->ticket->loadMissing(['event', 'user']);
+        $this->ticket->loadMissing(['event.organizer', 'user']);
     }
 
     /**
@@ -60,5 +62,22 @@ class EventTicketMail extends Mailable implements ShouldQueue
                 'user' => $this->ticket->user,
             ],
         );
+    }
+
+    /**
+     * Get the attachments for the message.
+     *
+     * @return array<int, Attachment>
+     */
+    public function attachments(): array
+    {
+        $pdf = Pdf::loadView('pdf.ticket-pass', [
+            'ticket' => $this->ticket,
+        ]);
+
+        return [
+            Attachment::fromData(fn () => $pdf->output(), "Ticket-Pass-{$this->ticket->ticket_code}.pdf")
+                ->withMime('application/pdf'),
+        ];
     }
 }
